@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate.test;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
