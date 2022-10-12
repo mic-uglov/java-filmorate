@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractController<T extends Item> {
-    @Autowired
     private ObjectMapper objectMapper;
 
     private int nextId;
@@ -27,6 +26,11 @@ public abstract class AbstractController<T extends Item> {
     public AbstractController() {
         nextId = 1;
         items = new HashMap<>();
+    }
+
+    @Autowired
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
@@ -39,9 +43,9 @@ public abstract class AbstractController<T extends Item> {
         getLogger().info("{} {} - создание", item.getItemTypeName(), item.getShort());
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
 
-        final int id = nextId++;
-
         if (validate(item)) {
+            final int id = nextId++;
+
             item.setId(id);
             items.put(id, item);
             getLogger().info("{} {} id={} успешно создан", item.getItemTypeName(), item.getShort(), id);
@@ -55,7 +59,7 @@ public abstract class AbstractController<T extends Item> {
     }
 
     private String getJsonForTrace(T item) {
-        if (!getLogger().isTraceEnabled()) {
+        if (objectMapper == null || !getLogger().isTraceEnabled()) {
             return null;
         }
 
