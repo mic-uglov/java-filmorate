@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FilmControllerTest {
+    /*
     public static FilmController controller = new FilmController();
 
     public static Film getDummyFilm() {
@@ -67,4 +68,5 @@ public class FilmControllerTest {
 
         assertFalse(controller.validate(film));
     }
+     */
 }

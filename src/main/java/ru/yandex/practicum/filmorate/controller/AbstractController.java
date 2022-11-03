@@ -10,22 +10,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.Item;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractController<T extends Item> {
+    private final Storage<T> storage;
     private ObjectMapper objectMapper;
 
-    private int nextId;
-    private final Map<Integer, T> items;
-
-    public AbstractController() {
-        nextId = 1;
-        items = new HashMap<>();
+    public AbstractController(Storage<T> storage) {
+        this.storage = storage;
     }
 
     @Autowired
@@ -35,7 +30,7 @@ public abstract class AbstractController<T extends Item> {
 
     @GetMapping
     public List<T> getAll() {
-        return new ArrayList<>(items.values());
+        return storage.getAll();
     }
 
     @PostMapping
@@ -43,17 +38,9 @@ public abstract class AbstractController<T extends Item> {
         getLogger().info("{} {} - создание", item.getItemTypeName(), item.getShort());
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
 
-        if (validate(item)) {
-            final int id = nextId++;
+        storage.create(item);
 
-            item.setId(id);
-            items.put(id, item);
-            getLogger().info("{} {} id={} успешно создан", item.getItemTypeName(), item.getShort(), id);
-        } else {
-            getLogger().warn("{} {} - переданы некорректные данные для создания",
-                    item.getItemTypeName(), item.getShort());
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        }
+        getLogger().info("{} {} id={} успешно создан", item.getItemTypeName(), item.getShort(), item.getId());
 
         return item;
     }
@@ -77,19 +64,9 @@ public abstract class AbstractController<T extends Item> {
         getLogger().info("{} {} id={} - обновление", item.getItemTypeName(), item.getShort(), id);
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
 
-        if (id == null || !items.containsKey(id)) {
-            getLogger().warn("{} {} id={} не найден", item.getItemTypeName(), item.getShort(), id);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } else {
-            if (validate(item)) {
-                getLogger().info("{} {} id={} успешно обновлен", item.getItemTypeName(), item.getShort(), id);
-                items.put(id, item);
-            } else {
-                getLogger().warn("{} {} id={} - переданы некорректные данные для обновления",
-                        item.getItemTypeName(), item.getShort(), id);
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            }
-        }
+        storage.update(item);
+
+        getLogger().info("{} {} id={} успешно обновлен", item.getItemTypeName(), item.getShort(), id);
 
         return item;
     }
@@ -97,6 +74,4 @@ public abstract class AbstractController<T extends Item> {
     protected Logger getLogger() {
         return NOPLogger.NOP_LOGGER;
     }
-
-    public abstract boolean validate(T item);
 }

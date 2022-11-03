@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
+    /*
     public static UserController controller = new UserController();
 
     public static User getDummyUser() {
@@ -84,4 +85,6 @@ public class UserControllerTest {
 
         assertFalse(controller.validate(user));
     }
+
+     */
 }
