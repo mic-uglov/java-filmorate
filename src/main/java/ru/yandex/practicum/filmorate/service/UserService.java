@@ -46,22 +46,30 @@ public class UserService extends AbstractService<User> {
         getLogger().info("Пользователи id={} и id={} хотят стать друзьями", id1, id2);
 
         check(id1);
-        check(id2);
-        storage.addFriend(id1, id2);
-        storage.addFriend(id2, id1);
+        if (id1 != id2) {
+            check(id2);
+            storage.addFriend(id1, id2);
+            storage.addFriend(id2, id1);
 
-        getLogger().info("Пользователи id={} и id={} стали друзьями", id1, id2);
+            getLogger().info("Пользователи id={} и id={} стали друзьями", id1, id2);
+        } else {
+            getLogger().info("Пользователь id={} сам себе лучший друг", id1);
+        }
     }
 
     public void stopBeingFriends(int id1, int id2) {
         getLogger().info("Пользователи id={} и id={} не хотят быть друзьями", id1, id2);
 
         check(id1);
-        check(id2);
-        storage.deleteFriend(id1, id2);
-        storage.deleteFriend(id2, id1);
+        if (id1 != id2) {
+            check(id2);
+            storage.deleteFriend(id1, id2);
+            storage.deleteFriend(id2, id1);
 
-        getLogger().info("Пользователи id={} и id={} перестали быть друзьями", id1, id2);
+            getLogger().info("Пользователи id={} и id={} перестали быть друзьями", id1, id2);
+        } else {
+            getLogger().info("Пользователь id={} сам себе лучший друг", id1);
+        }
     }
 
     public List<User> getCommonFriends(int id1, int id2) {
