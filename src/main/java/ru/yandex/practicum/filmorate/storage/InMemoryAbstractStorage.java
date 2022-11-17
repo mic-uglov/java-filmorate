@@ -23,31 +23,22 @@ public abstract class InMemoryAbstractStorage<T extends Item> implements Storage
 
     @Override
     public void create(T item) {
-        validate(item);
-
         item.setId(nextId++);
         items.put(item.getId(), item);
     }
 
     @Override
     public void update(T item) {
-        final Integer id = item.getId();
-
-        if (id == null) {
-            // TODO
-            throw new RuntimeException("item is null");
-        }
-
-        if (!items.containsKey(id)) {
-            // TODO
-            throw new RuntimeException("item does not exists");
-        }
-
-        validate(item);
-
-        items.put(id, item);
+        items.put(item.getId(), item);
     }
 
-    // TODO возможно, в явном виде валидация не нужна будет
-    protected abstract void validate(T item);
+    @Override
+    public T get(int id) {
+        return items.get(id);
+    }
+
+    @Override
+    public boolean exists(int id) {
+        return items.containsKey(id);
+    }
 }

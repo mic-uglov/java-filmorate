@@ -8,4 +8,6 @@ public interface Storage<T extends Item> {
     List<T> getAll();
     void create(T item);
     void update(T item);
+    T get(int id);
+    boolean exists(int id);
 }
