@@ -43,6 +43,8 @@ public class UserService extends AbstractService<User> {
     }
 
     public void becomeFriends(int id1, int id2) {
+        getLogger().info("Пользователи id={} и id={} хотят стать друзьями", id1, id2);
+
         check(id1);
         check(id2);
         storage.addFriend(id1, id2);
@@ -52,6 +54,8 @@ public class UserService extends AbstractService<User> {
     }
 
     public void stopBeingFriends(int id1, int id2) {
+        getLogger().info("Пользователи id={} и id={} не хотят быть друзьями", id1, id2);
+
         check(id1);
         check(id2);
         storage.deleteFriend(id1, id2);

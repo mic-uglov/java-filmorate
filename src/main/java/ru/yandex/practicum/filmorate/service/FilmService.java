@@ -36,6 +36,8 @@ public class FilmService extends AbstractService<Film> {
         check(filmId);
         userService.check(userId);
         storage.putALike(filmId, userId);
+
+        getLogger().info("Пользователь id={} добавил лайк фильму id={}", userId, filmId);
     }
 
     public void removeALike(int filmId, int userId) {
@@ -44,6 +46,8 @@ public class FilmService extends AbstractService<Film> {
         check(filmId);
         userService.check(userId);
         storage.removeALike(filmId, userId);
+
+        getLogger().info("Пользователь id={} удалил лайк у фильма id={}", userId, filmId);
     }
 
     public List<Film> getMostPopular(@PositiveOrZero int count) {
