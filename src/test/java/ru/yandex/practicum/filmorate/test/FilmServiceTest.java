@@ -61,6 +61,6 @@ public class FilmServiceTest extends AbstractServiceTest<Film> {
 
         service.create(new Film());
 
-        assertNotEquals(1, service.getMostPopular(0));
+        assertEquals(1, service.getMostPopular(0).size());
     }
 }
