@@ -16,7 +16,7 @@ public class User extends Item {
     @Email
     private String email;
 
-    @NotBlank
+    @NotNull
     @Pattern(regexp = LOGIN_REGEXP)
     private String login;
 
