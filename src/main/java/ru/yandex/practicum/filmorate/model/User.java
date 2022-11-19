@@ -12,7 +12,7 @@ public class User extends Item {
     private static final String USER = "Пользователь";
     private static final String LOGIN_REGEXP = "^\\S+$";
 
-    @NotBlank
+    @NotNull
     @Email
     private String email;
 
@@ -22,7 +22,8 @@ public class User extends Item {
 
     private String name;
 
-    @Past
+    @NotNull
+    @PastOrPresent
     private LocalDate birthday;
 
     @Override

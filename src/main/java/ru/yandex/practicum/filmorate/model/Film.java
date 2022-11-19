@@ -18,6 +18,7 @@ public class Film extends Item {
     @NotBlank
     private String name;
 
+    @NotBlank
     @Size(max = DESCRIPTION_MAX_LEN)
     private String description;
 
