@@ -1,49 +1,35 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController extends AbstractController<Film> {
-    private static final int DESCRIPTION_MAX_LEN = 200;
-    private static final LocalDate RELEASE_MIN_DATE = LocalDate.of(1895, 12, 28);
+    private final FilmService service;
 
-    private static final Logger logger = LoggerFactory.getLogger(FilmController.class);
-
-    @Override
-    public boolean validate(Film film) {
-        boolean valid = true;
-
-        if (film.getName() == null || film.getName().isBlank()) {
-            getLogger().warn("Наименование фильма не должно быть пустым");
-            valid = false;
-        }
-        if (film.getDescription() != null && film.getDescription().length() > DESCRIPTION_MAX_LEN) {
-            getLogger().warn("Описание фильма не должно быть длиннее {} символов", DESCRIPTION_MAX_LEN);
-            valid = false;
-        }
-        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(RELEASE_MIN_DATE)) {
-            getLogger().warn("Дата выхода фильма не должна быть ранее {}",
-                    RELEASE_MIN_DATE.format(DateTimeFormatter.ISO_DATE));
-            valid = false;
-        }
-        if (film.getDuration() <= 0) {
-            getLogger().warn("Длительность фильма должна быть положительной");
-            valid = false;
-        }
-
-        return valid;
+    @Autowired
+    public FilmController(FilmService service) {
+        super(service);
+        this.service = service;
     }
 
-    @Override
-    protected Logger getLogger() {
-        return logger;
+    @PutMapping("/{id}/like/{userId}")
+    public void putALike(@PathVariable int id, @PathVariable int userId) {
+        service.putALike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeALike(@PathVariable int id, @PathVariable int userId) {
+        service.removeALike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getMostPopular(@RequestParam(required = false, defaultValue = "0") int count) {
+        return service.getMostPopular(count);
     }
 }
