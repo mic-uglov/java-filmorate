@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -54,14 +55,14 @@ public abstract class AbstractStorageTest {
 
         storage.create(item);
 
-        assertSame(item, storage.get(item.getId()));
+        assertSame(item, storage.get(item.getId()).orElseThrow());
     }
 
     @Test
     public void testGettingWhenNotExists() {
         Storage storage = getStorage();
 
-        assertNull(storage.get(999));
+        assertTrue(storage.get(999).isEmpty());
     }
 
     @Test
@@ -72,7 +73,7 @@ public abstract class AbstractStorageTest {
         storage.create(item);
         storage.update(item);
 
-        assertSame(item, storage.get(item.getId()));
+        assertSame(item, storage.get(item.getId()).orElseThrow());
     }
 
     @Test

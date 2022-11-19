@@ -34,7 +34,8 @@ public abstract class FilmStorageTest {
 
         storage.putALike(2, 1);
 
-        assertEquals(List.of(storage.get(2), storage.get(1)), storage.getMostPopular(100));
+        assertEquals(List.of(storage.get(2).orElseThrow(), storage.get(1).orElseThrow()),
+                storage.getMostPopular(100));
     }
 
     @Test
@@ -44,7 +45,8 @@ public abstract class FilmStorageTest {
         storage.putALike(1, 1);
         storage.putALike(2, 1);
 
-        assertEquals(List.of(storage.get(1), storage.get(2)), storage.getMostPopular(100));
+        assertEquals(List.of(storage.get(1).orElseThrow(), storage.get(2).orElseThrow()),
+                storage.getMostPopular(100));
     }
 
     @Test
@@ -58,11 +60,13 @@ public abstract class FilmStorageTest {
         storage.putALike(2, 1);
         storage.putALike(2, 2);
 
-        assertEquals(List.of(storage.get(1), storage.get(2)), storage.getMostPopular(100));
+        assertEquals(List.of(storage.get(1).orElseThrow(), storage.get(2).orElseThrow()),
+                storage.getMostPopular(100));
 
         storage.removeALike(1, 1);
         storage.removeALike(1, 2);
 
-        assertEquals(List.of(storage.get(2), storage.get(1)), storage.getMostPopular(100));
+        assertEquals(List.of(storage.get(2).orElseThrow(), storage.get(1).orElseThrow()),
+                storage.getMostPopular(100));
     }
 }

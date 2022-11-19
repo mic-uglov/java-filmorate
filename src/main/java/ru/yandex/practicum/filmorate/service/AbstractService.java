@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Validated
 public abstract class AbstractService<T extends Item> {
@@ -35,7 +36,7 @@ public abstract class AbstractService<T extends Item> {
         return storage.getAll();
     }
 
-    public T get(int id) {
+    public Optional<T> get(int id) {
         check(id);
         return storage.get(id);
     }

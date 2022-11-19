@@ -2,10 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Item;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class InMemoryAbstractStorage<T extends Item> implements Storage<T> {
     private int nextId;
@@ -33,8 +30,8 @@ public abstract class InMemoryAbstractStorage<T extends Item> implements Storage
     }
 
     @Override
-    public T get(int id) {
-        return items.get(id);
+    public Optional<T> get(int id) {
+        return Optional.ofNullable(items.get(id));
     }
 
     @Override

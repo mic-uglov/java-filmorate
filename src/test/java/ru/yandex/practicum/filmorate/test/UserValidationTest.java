@@ -72,15 +72,12 @@ public class UserValidationTest {
         User user = getDummyUser();
 
         user.setBirthday(null);
-        assertTrue(validator.validate(user).isEmpty());
+        assertEquals(1, validator.validate(user).size());
     }
 
     @Test
     public void testValidationWhenBirthdayInvalid() {
         User user = getDummyUser();
-
-        user.setBirthday(LocalDate.now());
-        assertEquals(1, validator.validate(user).size());
 
         user.setBirthday(LocalDate.now().plusYears(1));
         assertEquals(1, validator.validate(user).size());

@@ -82,8 +82,10 @@ public class InMemoryFilmStorage extends InMemoryAbstractStorage<Film> implement
     @Override
     public List<Film> getMostPopular(int count) {
         return rating.stream()
-                .limit(count)
                 .map(this::get)
+                .filter(Optional::isPresent)
+                .limit(count)
+                .map(Optional::get)
                 .collect(Collectors.toUnmodifiableList());
     }
 }

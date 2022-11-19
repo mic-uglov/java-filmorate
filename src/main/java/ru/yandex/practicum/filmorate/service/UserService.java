@@ -11,6 +11,8 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,16 +78,20 @@ public class UserService extends AbstractService<User> {
         check(id1);
         check(id2);
         return CollectionUtils.intersection(storage.getFriends(id1), storage.getFriends(id2)).stream()
+                .sorted()
                 .map(storage::get)
-                .sorted(Comparator.comparingInt(Item::getId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     public List<User> getFriends(int id) {
         check(id);
         return storage.getFriends(id).stream()
+                .sorted()
                 .map(storage::get)
-                .sorted(Comparator.comparingInt(Item::getId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toUnmodifiableList());
     }
 }
