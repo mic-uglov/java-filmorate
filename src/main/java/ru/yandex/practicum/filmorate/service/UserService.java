@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,8 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -73,21 +70,11 @@ public class UserService extends AbstractService<User> {
     public List<User> getCommonFriends(int id1, int id2) {
         check(id1);
         check(id2);
-        return CollectionUtils.intersection(storage.getFriends(id1), storage.getFriends(id2)).stream()
-                .sorted()
-                .map(storage::get)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toUnmodifiableList());
+        return storage.getCommonFriends(id1, id2);
     }
 
     public List<User> getFriends(int id) {
         check(id);
-        return storage.getFriends(id).stream()
-                .sorted()
-                .map(storage::get)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toUnmodifiableList());
+        return storage.getFriends(id);
     }
 }
