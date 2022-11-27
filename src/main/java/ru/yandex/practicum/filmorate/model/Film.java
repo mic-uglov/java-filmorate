@@ -1,14 +1,20 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.validation.After;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonDeserialize(using = FilmDeserializer.class)
 public class Film extends Item {
     private static final String FILM = "Фильм";
 
@@ -28,6 +34,10 @@ public class Film extends Item {
     @Positive
     private int duration;
 
+    private MpaRatingItem mpa;
+
+    private Set<Genre> genres;
+
     @Override
     public String getItemTypeName() {
         return FILM;
@@ -36,5 +46,9 @@ public class Film extends Item {
     @Override
     public String getShort() {
         return name;
+    }
+
+    public Film() {
+        this.genres = new HashSet<>();
     }
 }

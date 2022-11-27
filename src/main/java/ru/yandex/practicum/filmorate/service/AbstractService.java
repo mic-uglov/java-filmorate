@@ -37,8 +37,17 @@ public abstract class AbstractService<T extends Item> {
     }
 
     public Optional<T> get(int id) {
+        getLogger().info("Получение объекта id={}", id);
+
         check(id);
-        return storage.get(id);
+
+        Optional<T> optionalItem = storage.get(id);
+        T item = optionalItem.orElseThrow(UnsupportedOperationException::new);
+
+        getLogger().info("Найден {} {}", item.getItemTypeName(), item.getShort());
+        getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
+
+        return optionalItem;
     }
 
     protected void check(int id) {

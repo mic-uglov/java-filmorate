@@ -2,14 +2,33 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MpaRatingItem;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryFilmStorage extends InMemoryAbstractStorage<Film> implements FilmStorage {
+    private static final Map<Integer, Genre> genres = new TreeMap<>(Map.of(
+            1, new Genre(1, "Комедия"),
+            2, new Genre(2, "Драма"),
+            3, new Genre(3, "Мультфильм"),
+            4, new Genre(4, "Триллер"),
+            5, new Genre(5, "Документальный"),
+            6, new Genre(6, "Боевик")
+    ));
+    private static final Map<Integer, MpaRatingItem> mpas = new TreeMap<>(Map.of(
+            1, new MpaRatingItem(1, "G", "у фильма нет возрастных ограничений"),
+            2, new MpaRatingItem(2, "PG", "детям рекомендуется смотреть фильм с родителями"),
+            3, new MpaRatingItem(3, "PG-13", "детям до 13 лет просмотр не желателен"),
+            4, new MpaRatingItem(4, "R",
+                    "лицам до 17 лет просматривать фильм можно только в присутствии взрослого"),
+            5, new MpaRatingItem(5, "NC-17", "лицам до 18 лет просмотр запрещён")
+    ));
+
     private final Map<Integer, Set<Integer>> likes;
-    private final TreeSet<Integer> rating;
+    private final Set<Integer> rating;
 
     public InMemoryFilmStorage() {
         likes = new HashMap<>();
@@ -87,5 +106,25 @@ public class InMemoryFilmStorage extends InMemoryAbstractStorage<Film> implement
                 .limit(count)
                 .map(Optional::get)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public Optional<MpaRatingItem> getMpa(int id) {
+        return Optional.ofNullable(mpas.get(id));
+    }
+
+    @Override
+    public Collection<MpaRatingItem> getMpas() {
+        return mpas.values();
+    }
+
+    @Override
+    public Optional<Genre> getGenre(int id) {
+        return Optional.ofNullable(genres.get(id));
+    }
+
+    @Override
+    public Collection<Genre> getGenres() {
+        return genres.values();
     }
 }

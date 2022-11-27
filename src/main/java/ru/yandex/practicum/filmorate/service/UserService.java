@@ -5,13 +5,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Item;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,22 +42,21 @@ public class UserService extends AbstractService<User> {
     }
 
     public void becomeFriends(int id1, int id2) {
-        getLogger().info("Пользователи id={} и id={} хотят стать друзьями", id1, id2);
+        getLogger().info("Пользователь id={} добавляет в друзья пользователя id={}", id1, id2);
 
         check(id1);
         if (id1 != id2) {
             check(id2);
             storage.addFriend(id1, id2);
-            storage.addFriend(id2, id1);
 
-            getLogger().info("Пользователи id={} и id={} стали друзьями", id1, id2);
+            getLogger().info("Пользователь id={} добавил в друзья пользователя id={}", id1, id2);
         } else {
             getLogger().info("Пользователь id={} сам себе лучший друг", id1);
         }
     }
 
     public void stopBeingFriends(int id1, int id2) {
-        getLogger().info("Пользователи id={} и id={} не хотят быть друзьями", id1, id2);
+        getLogger().info("Пользователь id={} удаляет из друзей пользователя id={}", id1, id2);
 
         check(id1);
         if (id1 != id2) {
@@ -68,7 +64,7 @@ public class UserService extends AbstractService<User> {
             storage.deleteFriend(id1, id2);
             storage.deleteFriend(id2, id1);
 
-            getLogger().info("Пользователи id={} и id={} перестали быть друзьями", id1, id2);
+            getLogger().info("Пользователь id={} удалил из друзей пользователя id={}", id1, id2);
         } else {
             getLogger().info("Пользователь id={} сам себе лучший друг", id1);
         }

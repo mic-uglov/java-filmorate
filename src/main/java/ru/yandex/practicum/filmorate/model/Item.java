@@ -5,9 +5,14 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties({"itemTypeName", "short"})
-public abstract class Item {
+public class Item {
     private Integer id;
 
-    public abstract String getItemTypeName();
-    public abstract String getShort();
+    public String getItemTypeName() {
+        return null;
+    }
+
+    public String getShort() {
+        return null;
+    }
 }
