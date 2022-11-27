@@ -10,36 +10,46 @@ import java.util.Map;
 import java.util.Optional;
 
 public abstract class AbstractDbStorage<T extends Item> implements Storage<T> {
-    private final JdbcTemplate jdbcTemplate;
+    private static final String GET_ALL_SQL_TEMPLATE = "SELECT * FROM %s";
+    private static final String GET_SQL_TEMPLATE = "SELECT * FROM %s WHERE id = ?";
+    private static final String EXISTS_SQL_TEMPLATE = "SELECT NULL FROM %s WHERE id = ?";
 
-    public AbstractDbStorage(JdbcTemplate jdbcTemplate) {
+    private final JdbcTemplate jdbcTemplate;
+    private final String tableName;
+
+    private final String getAllSql;
+    private final String getSql;
+    private final String existsSql;
+
+    public AbstractDbStorage(JdbcTemplate jdbcTemplate, String tableName) {
         this.jdbcTemplate = jdbcTemplate;
+        this.tableName = tableName;
+
+        getAllSql = String.format(GET_ALL_SQL_TEMPLATE, tableName);
+        getSql = String.format(GET_SQL_TEMPLATE, tableName);
+        existsSql = String.format(EXISTS_SQL_TEMPLATE, tableName);
     }
 
-    protected abstract String getSql(String key);
-
     protected abstract RowMapper<T> getRowMapper();
-
-    protected abstract String getTableName();
 
     protected abstract Map<String, Object> itemToMap(T item);
 
     @Override
     public List<T> getAll() {
-        return jdbcTemplate.query(getSql("getAll"), getRowMapper());
+        return jdbcTemplate.query(getAllSql, getRowMapper());
     }
 
     @Override
     public void create(T item) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName(getTableName())
+                .withTableName(tableName)
                 .usingGeneratedKeyColumns("id");
         item.setId(jdbcInsert.executeAndReturnKey(itemToMap(item)).intValue());
     }
 
     @Override
     public Optional<T> get(int id) {
-        List<T> items = jdbcTemplate.query(getSql("get"), getRowMapper(), id);
+        List<T> items = jdbcTemplate.query(getSql, getRowMapper(), id);
         if (items.isEmpty()) {
             return Optional.empty();
         } else {
@@ -49,6 +59,6 @@ public abstract class AbstractDbStorage<T extends Item> implements Storage<T> {
 
     @Override
     public boolean exists(int id) {
-        return jdbcTemplate.queryForRowSet(getSql("exists"), id).next();
+        return jdbcTemplate.queryForRowSet(existsSql, id).next();
     }
 }

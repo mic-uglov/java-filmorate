@@ -15,10 +15,8 @@ import java.util.Map;
 @Repository
 @Primary
 public class UserDbStorage extends AbstractDbStorage<User> implements UserStorage {
+    public static final String TABLE_NAME = "users";
     private static final Map<String, String> sqls = Map.of(
-            "get", "SELECT * FROM users WHERE id = ?",
-            "exists", "SELECT NULL FROM users WHERE id = ?",
-            "getAll", "SELECT * FROM users",
             "update", "UPDATE users SET email = ?, login = ?, name = ?, birthday = ?",
             "addFriend", "INSERT INTO friends VALUES (?, ?)",
             "deleteFriend", "DELETE FROM friends WHERE user_id = ? AND friend_id = ?",
@@ -28,15 +26,15 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
                     "id IN (SELECT friend_id FROM friends WHERE user_id = ?)"
     );
 
-    private static final String USERS_TABLE_NAME = "users";
-
     private static User mapRow(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
+
         user.setId(rs.getInt("id"));
         user.setEmail(rs.getString("email"));
         user.setLogin(rs.getString("login"));
         user.setName(rs.getString("name"));
         user.setBirthday(rs.getDate("birthday").toLocalDate());
+
         return user;
     }
 
@@ -53,23 +51,13 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
 
     @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+        super(jdbcTemplate, TABLE_NAME);
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Override
-    protected String getSql(String key) {
-        return sqls.get(key);
     }
 
     @Override
     protected RowMapper<User> getRowMapper() {
         return UserDbStorage::mapRow;
-    }
-
-    @Override
-    protected String getTableName() {
-        return USERS_TABLE_NAME;
     }
 
     @Override
@@ -79,27 +67,27 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update(getSql("update"),
+        jdbcTemplate.update(sqls.get("update"),
                 user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
     }
 
     @Override
     public void addFriend(int userId, int friendId) {
-        jdbcTemplate.update(getSql("addFriend"), userId, friendId);
+        jdbcTemplate.update(sqls.get("addFriend"), userId, friendId);
     }
 
     @Override
     public void deleteFriend(int userId, int friendId) {
-        jdbcTemplate.update(getSql("deleteFriend"), userId, friendId);
+        jdbcTemplate.update(sqls.get("deleteFriend"), userId, friendId);
     }
 
     @Override
     public List<User> getFriends(int userId) {
-        return jdbcTemplate.query(getSql("getFriends"), getRowMapper(), userId);
+        return jdbcTemplate.query(sqls.get("getFriends"), getRowMapper(), userId);
     }
 
     @Override
     public List<User> getCommonFriends(int id1, int id2) {
-        return jdbcTemplate.query(getSql("getCommonFriends"), getRowMapper(), id1, id2);
+        return jdbcTemplate.query(sqls.get("getCommonFriends"), getRowMapper(), id1, id2);
     }
 }

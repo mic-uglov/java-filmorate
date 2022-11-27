@@ -1,3 +1,10 @@
+DROP TABLE IF EXISTS film_genre;
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS friends;
+DROP TABLE IF EXISTS genres;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS films;
+DROP TABLE IF EXISTS mpa_rating;
 
 CREATE TABLE IF NOT EXISTS genres (
     id IDENTITY PRIMARY KEY,
@@ -5,7 +12,7 @@ CREATE TABLE IF NOT EXISTS genres (
 
 CREATE TABLE IF NOT EXISTS mpa_rating (
     id IDENTITY PRIMARY KEY,
-    code VARCHAR(16) UNIQUE,
+    name VARCHAR(16) UNIQUE,
     description VARCHAR(256));
 
 CREATE TABLE IF NOT EXISTS users (
@@ -19,9 +26,9 @@ CREATE TABLE IF NOT EXISTS films (
     id IDENTITY PRIMARY KEY,
     name VARCHAR(256) NOT NULL,
     description VARCHAR(1024) NOT NULL,
-    releaseDate DATE NOT NULL,
+    release_date DATE NOT NULL,
     duration INTEGER NOT NULL,
-    mpa_rating BIGINT REFERENCES mpa_rating (id));
+    mpa BIGINT REFERENCES mpa_rating (id));
 
 CREATE TABLE IF NOT EXISTS film_genre (
     film_id BIGINT NOT NULL REFERENCES films (id),
