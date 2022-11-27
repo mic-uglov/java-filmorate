@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -18,7 +17,7 @@ public class FilmDeserializer extends JsonDeserializer<Film> {
     private final FilmService filmService;
 
     @Autowired
-    public FilmDeserializer(ObjectMapper objectMapper, FilmService filmService) {
+    public FilmDeserializer(FilmService filmService) {
         this.filmService = filmService;
     }
 
