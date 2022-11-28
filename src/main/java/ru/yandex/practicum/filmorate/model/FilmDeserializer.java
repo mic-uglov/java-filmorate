@@ -55,9 +55,7 @@ public class FilmDeserializer extends JsonDeserializer<Film> {
         if (mpaNode != null) {
             JsonNode mpaIdNode = mpaNode.get("id");
             if (mpaIdNode != null) {
-                film.setMpa(
-                        filmService.getMpa(mpaIdNode.asInt())
-                                .orElseThrow(UnsupportedOperationException::new));
+                film.setMpa(filmService.getMpa(mpaIdNode.asInt()).orElseThrow());
             }
         }
 
@@ -67,8 +65,7 @@ public class FilmDeserializer extends JsonDeserializer<Film> {
             genresNode.elements().forEachRemaining(genreNode -> {
                 JsonNode genreIdNode = genreNode.get("id");
                 if (genreIdNode != null) {
-                    genres.add(filmService.getGenre(genreIdNode.asInt())
-                            .orElseThrow(UnsupportedOperationException::new));
+                    genres.add(filmService.getGenre(genreIdNode.asInt()).orElseThrow());
                 }
             });
             film.setGenres(genres);

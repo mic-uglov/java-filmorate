@@ -42,7 +42,7 @@ public abstract class AbstractService<T extends Item> {
         check(id);
 
         Optional<T> optionalItem = storage.get(id);
-        T item = optionalItem.orElseThrow(UnsupportedOperationException::new);
+        T item = optionalItem.orElseThrow();
 
         getLogger().info("Найден {} {}", item.getItemTypeName(), item.getShort());
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
