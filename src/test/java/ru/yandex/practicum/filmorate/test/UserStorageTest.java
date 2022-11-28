@@ -18,21 +18,23 @@ public abstract class UserStorageTest {
 
     private UserStorage getDummyStorage() {
         UserStorage storage = getStorage();
-        user1 = new User();
-        user2 = new User();
-
-        user1.setEmail("user1@test.ru");
-        user1.setLogin("user1");
-        user1.setBirthday(LocalDate.now());
-
-        user2.setEmail("user2@test.ru");
-        user2.setLogin("user2");
-        user2.setBirthday(LocalDate.now());
+        user1 = getDummyUser("user1");
+        user2 = getDummyUser("user2");
 
         storage.create(user1);
         storage.create(user2);
 
         return storage;
+    }
+
+    private User getDummyUser(String login) {
+        User user = new User();
+
+        user.setEmail(login + "@test.ru");
+        user.setLogin(login);
+        user.setBirthday(LocalDate.now());
+
+        return user;
     }
 
     @Test
@@ -56,8 +58,7 @@ public abstract class UserStorageTest {
 
         storage.addFriend(user1.getId(), user2.getId());
 
-        assertEquals(List.of(storage.get(user2.getId()).orElseThrow()),
-                storage.getFriends(user1.getId()));
+        assertEquals(List.of(user2), storage.getFriends(user1.getId()));
     }
 
     @Test
@@ -74,7 +75,7 @@ public abstract class UserStorageTest {
         storage.addFriend(user1.getId(), user2.getId());
         storage.addFriend(user1.getId(), user2.getId());
 
-        assertEquals(List.of(storage.get(user2.getId()).orElseThrow()), storage.getFriends(user1.getId()));
+        assertEquals(List.of(user2), storage.getFriends(user1.getId()));
     }
 
     @Test
@@ -92,5 +93,22 @@ public abstract class UserStorageTest {
         UserStorage storage = getStorage();
 
         assertDoesNotThrow(() -> storage.deleteFriend(100, 200));
+    }
+
+    @Test
+    public void testGettingCommonFriends() {
+        UserStorage storage = getDummyStorage();
+        User user3 = getDummyUser("user3");
+        User user4 = getDummyUser("user4");
+
+        storage.create(user3);
+        storage.create(user4);
+        storage.addFriend(user1.getId(), user3.getId());
+        storage.addFriend(user2.getId(), user3.getId());
+        storage.addFriend(user1.getId(), user4.getId());
+        storage.addFriend(user2.getId(), user4.getId());
+        storage.addFriend(user1.getId(), user2.getId());
+
+        assertEquals(List.of(user3, user4), storage.getCommonFriends(user1.getId(), user2.getId()));
     }
 }
