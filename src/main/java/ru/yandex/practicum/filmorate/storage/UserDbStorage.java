@@ -17,8 +17,10 @@ import java.util.Map;
 public class UserDbStorage extends AbstractDbStorage<User> implements UserStorage {
     public static final String TABLE_NAME = "users";
     private static final Map<String, String> sqls = Map.of(
-            "update", "UPDATE users SET email = ?, login = ?, name = ?, birthday = ?",
-            "addFriend", "INSERT INTO friends VALUES (?, ?)",
+            "update", "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?",
+            "addFriend", "INSERT INTO friends SELECT ?, ? " +
+                    "WHERE NOT EXISTS (" +
+                    "SELECT NULL FROM friends WHERE user_id = ? AND friend_id = ?)",
             "deleteFriend", "DELETE FROM friends WHERE user_id = ? AND friend_id = ?",
             "getFriends", "SELECT * FROM users u JOIN friends f ON f.friend_id = u.id WHERE f.user_id = ?",
             "getCommonFriends", "SELECT * FROM users WHERE " +
@@ -68,12 +70,12 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     @Override
     public void update(User user) {
         jdbcTemplate.update(sqls.get("update"),
-                user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+                user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
     }
 
     @Override
     public void addFriend(int userId, int friendId) {
-        jdbcTemplate.update(sqls.get("addFriend"), userId, friendId);
+        jdbcTemplate.update(sqls.get("addFriend"), userId, friendId, userId, friendId);
     }
 
     @Override
