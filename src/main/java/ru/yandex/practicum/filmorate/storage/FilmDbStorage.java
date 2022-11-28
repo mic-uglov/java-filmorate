@@ -31,10 +31,8 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
                                 "SELECT NULL FROM likes WHERE film_id = ? AND user_id = ?)",
             "removeALike", "DELETE FROM likes WHERE film_id = ? AND user_id = ?",
             "getMostPopular",
-                    "SELECT * FROM films WHERE id IN (" +
-                            "SELECT f.id " +
-                            "FROM films f LEFT JOIN likes l ON l.film_id = f.id " +
-                            "GROUP BY f.id ORDER BY COUNT(l.user_id) DESC LIMIT ?)"
+                    "SELECT f.* FROM films f LEFT JOIN likes l ON l.film_id = f.id " +
+                            "GROUP BY f.id ORDER BY COUNT(l.user_id) DESC LIMIT ?"
     );
 
     private static Map<String, Object> filmToMap(Film film) {
