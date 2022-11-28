@@ -15,7 +15,7 @@ import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("rawtypes")
 @SpringBootTest
 @AutoConfigureTestDatabase
 public class AbstractDbStorageTest extends AbstractStorageTest {
@@ -32,7 +32,7 @@ public class AbstractDbStorageTest extends AbstractStorageTest {
     }
 
     @Autowired
-    public AbstractDbStorageTest(JdbcTemplate jdbcTemplate) throws Exception {
+    public AbstractDbStorageTest(JdbcTemplate jdbcTemplate) {
         if (storage == null) {
             storage = mock(AbstractDbStorage.class,
                     withSettings()

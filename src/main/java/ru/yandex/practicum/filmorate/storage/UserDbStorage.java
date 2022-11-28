@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,9 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
             "update", "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?",
             "addFriend", "INSERT INTO friends SELECT ?, ? " +
                     "WHERE NOT EXISTS (" +
-                    "SELECT NULL FROM friends WHERE user_id = ? AND friend_id = ?)",
+                    "SELECT NULL FROM friends WHERE user_id = ? AND friend_id = ?) AND " +
+                    "? IN (SELECT id FROM users) AND " +
+                    "? IN (SELECT id FROM users)",
             "deleteFriend", "DELETE FROM friends WHERE user_id = ? AND friend_id = ?",
             "getFriends", "SELECT * FROM users u JOIN friends f ON f.friend_id = u.id WHERE f.user_id = ?",
             "getCommonFriends", "SELECT * FROM users WHERE " +
@@ -41,12 +44,14 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     }
 
     private static Map<String, Object> userToMap(User user) {
-        return Map.of(
-                "email", user.getEmail(),
-                "login", user.getLogin(),
-                "name", user.getName(),
-                "birthday", user.getBirthday()
-        );
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("email", user.getEmail());
+        map.put("login", user.getLogin());
+        map.put("name", user.getName());
+        map.put("birthday", user.getBirthday());
+
+        return map;
     }
 
     private final JdbcTemplate jdbcTemplate;
@@ -75,7 +80,7 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
 
     @Override
     public void addFriend(int userId, int friendId) {
-        jdbcTemplate.update(sqls.get("addFriend"), userId, friendId, userId, friendId);
+        jdbcTemplate.update(sqls.get("addFriend"), userId, friendId, userId, friendId, userId, friendId);
     }
 
     @Override
