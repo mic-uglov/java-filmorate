@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 @SpringBootTest
 @AutoConfigureTestDatabase
 public class UserDbStorageTest extends UserStorageTest {
-    private static UserDbStorage storage;
+    private static UserStorage storage;
 
     private static JdbcTemplate jdbcTemplate;
 

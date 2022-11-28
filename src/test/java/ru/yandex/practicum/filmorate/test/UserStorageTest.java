@@ -11,10 +11,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class UserStorageTest {
-    protected abstract UserStorage getStorage();
-
     private User user1;
     private User user2;
+
+    protected abstract UserStorage getStorage();
 
     private UserStorage getDummyStorage() {
         UserStorage storage = getStorage();

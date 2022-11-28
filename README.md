@@ -31,7 +31,10 @@ INSERT INTO friends
         WHERE NOT EXISTS (
             SELECT NULL
                 FROM friends
-                WHERE user_id = ? AND friend_id = ?)
+                WHERE user_id = ? AND friend_id = ?
+            ) AND
+            ? IN (SELECT id FROM users) AND
+            ? IN (SELECT id FROM users)
 
 -- delete a friend
 DELETE FROM friends
@@ -79,12 +82,9 @@ DELETE FROM likes
     WHERE film_id = ? AND user_id = ?
 
 -- get most popular films with limit
-SELECT *
-    FROM films
-    WHERE id IN (
-        SELECT f.id
-            FROM films f LEFT JOIN likes l ON l.film_id = f.id
-            GROUP BY f.id
-            ORDER BY COUNT(l.user_id) DESC
-            LIMIT ?)
+SELECT f.*
+    FROM films f LEFT JOIN likes l ON l.film_id = f.id
+    GROUP BY f.id
+    ORDER BY COUNT(l.user_id) DESC
+    LIMIT ?
 ```
