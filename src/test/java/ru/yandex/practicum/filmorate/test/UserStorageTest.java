@@ -42,16 +42,14 @@ public abstract class UserStorageTest {
 
         storage.addFriend(1, 2);
 
-        assertEquals(List.of(2), storage.getFriends(1));
+        assertEquals(List.of(storage.get(2).orElseThrow()), storage.getFriends(1));
     }
 
     @Test
     public void testAddingFriendsWhenDoNotExist() {
         UserStorage storage = getStorage();
 
-        storage.addFriend(10, 20);
-
-        assertEquals(List.of(20), storage.getFriends(10));
+        assertDoesNotThrow(() -> storage.addFriend(10, 20));
     }
 
     @Test
@@ -61,7 +59,7 @@ public abstract class UserStorageTest {
         storage.addFriend(1, 2);
         storage.addFriend(1, 2);
 
-        assertEquals(List.of(2), storage.getFriends(1));
+        assertEquals(List.of(storage.get(2).orElseThrow()), storage.getFriends(1));
     }
 
     @Test

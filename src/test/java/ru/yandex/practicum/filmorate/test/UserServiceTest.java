@@ -58,14 +58,12 @@ public class UserServiceTest extends AbstractServiceTest<User> {
 
         service.becomeFriends(1, 2);
 
-        assertEquals(List.of(user1), service.getFriends(2));
         assertEquals(List.of(user2), service.getFriends(1));
 
         service.stopBeingFriends(1, 2);
         service.becomeFriends(2, 1);
 
         assertEquals(List.of(user1), service.getFriends(2));
-        assertEquals(List.of(user2), service.getFriends(1));
     }
 
     @Test
@@ -169,10 +167,13 @@ public class UserServiceTest extends AbstractServiceTest<User> {
         service.create(user3);
         service.create(user4);
         service.becomeFriends(1, 2);
-        service.becomeFriends(3, 1);
-        service.becomeFriends(2, 4);
+        service.becomeFriends(1, 3);
+        service.becomeFriends(1, 4);
+        service.becomeFriends(2, 1);
         service.becomeFriends(2, 3);
-        service.becomeFriends(4, 1);
+        service.becomeFriends(2, 4);
+        service.becomeFriends(3, 4);
+        service.becomeFriends(4, 3);
 
         assertEquals(List.of(user3, user4), service.getCommonFriends(1, 2));
         assertEquals(List.of(user3, user4), service.getCommonFriends(2, 1));

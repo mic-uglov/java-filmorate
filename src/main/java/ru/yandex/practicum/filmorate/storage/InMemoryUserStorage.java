@@ -17,9 +17,11 @@ public class InMemoryUserStorage extends InMemoryAbstractStorage<User> implement
 
     @Override
     public void addFriend(int userId, int friendId) {
-        Set<Integer> userFriends = friends.computeIfAbsent(userId, id -> new HashSet<>());
+        if (exists(userId) && exists(friendId)) {
+            Set<Integer> userFriends = friends.computeIfAbsent(userId, id -> new HashSet<>());
 
-        userFriends.add(friendId);
+            userFriends.add(friendId);
+        }
     }
 
     @Override
