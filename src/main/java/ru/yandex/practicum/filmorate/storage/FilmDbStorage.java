@@ -21,9 +21,20 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
             "getMpas", "SELECT * FROM mpa_rating ORDER BY id",
             "getGenres", "SELECT * FROM genres ORDER BY id",
             "getFilmGenres", "SELECT genre_id FROM film_genre WHERE film_id = ? ORDER BY genre_id",
-            "update", "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa = ?",
+            "update", "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa = ? " +
+                    "WHERE id = ?",
             "deleteFilmGenres", "DELETE FROM film_genre WHERE film_id = ?",
-            "insertFilmGenre", "INSERT INTO film_genre VALUES (?, ?)"
+            "insertFilmGenre", "INSERT INTO film_genre VALUES (?, ?)",
+            "putALike",
+                    "INSERT INTO likes SELECT ?, ? " +
+                            "WHERE NOT EXISTS (" +
+                                "SELECT NULL FROM likes WHERE film_id = ? AND user_id = ?)",
+            "removeALike", "DELETE FROM likes WHERE film_id = ? AND user_id = ?",
+            "getMostPopular",
+                    "SELECT * FROM films WHERE id IN (" +
+                            "SELECT f.id " +
+                            "FROM films f LEFT JOIN likes l ON l.film_id = f.id " +
+                            "GROUP BY f.id ORDER BY COUNT(l.user_id) DESC LIMIT ?)"
     );
 
     private static Map<String, Object> filmToMap(Film film) {
@@ -121,7 +132,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     public void update(Film film) {
         jdbcTemplate.update(sqls.get("update"),
                 film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
-                film.getMpa() == null ? null : film.getMpa().getId());
+                film.getMpa() == null ? null : film.getMpa().getId(), film.getId());
         if (!film.getGenres().equals(getFilmGenres(film))) {
             jdbcTemplate.update(sqls.get("deleteFilmGenres"), film.getId());
             insertFilmGenres(film);
@@ -138,17 +149,17 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
 
     @Override
     public void putALike(int filmId, int userId) {
-
+        jdbcTemplate.update(sqls.get("putALike"), filmId, userId, filmId, userId);
     }
 
     @Override
     public void removeALike(int filmId, int userId) {
-
+        jdbcTemplate.update(sqls.get("removeALike"), filmId, userId);
     }
 
     @Override
     public List<Film> getMostPopular(int count) {
-        return null;
+        return jdbcTemplate.query(sqls.get("getMostPopular"), getRowMapper(), count);
     }
 
     @Override
