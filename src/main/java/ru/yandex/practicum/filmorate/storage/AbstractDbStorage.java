@@ -30,9 +30,9 @@ public abstract class AbstractDbStorage<T extends Item> implements Storage<T> {
         existsSql = String.format(EXISTS_SQL_TEMPLATE, tableName);
     }
 
-    protected abstract RowMapper<T> getRowMapper();
+    public abstract RowMapper<T> getRowMapper();
 
-    protected abstract Map<String, Object> itemToMap(T item);
+    public abstract Map<String, Object> itemToMap(T item);
 
     @Override
     public List<T> getAll() {

@@ -91,7 +91,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     }
 
     @Override
-    protected RowMapper<Film> getRowMapper() {
+    public RowMapper<Film> getRowMapper() {
         return this::mapRow;
     }
 
@@ -109,16 +109,15 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
         return film;
     }
 
-    private Set<Genre> getFilmGenres(Film film) {
-        return new HashSet<>(
-                jdbcTemplate.query(
-                        sqls.get("getFilmGenres"),
-                        (rs, rowNum) -> genres.get(rs.getInt("genre_id")), film.getId())
-        );
+    private List<Genre> getFilmGenres(Film film) {
+        return jdbcTemplate.query(
+                sqls.get("getFilmGenres"),
+                (rs, rowNum) -> genres.get(rs.getInt("genre_id")), film.getId());
+
     }
 
     @Override
-    protected Map<String, Object> itemToMap(Film film) {
+    public Map<String, Object> itemToMap(Film film) {
         return filmToMap(film);
     }
 

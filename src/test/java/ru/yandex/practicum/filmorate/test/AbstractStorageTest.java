@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("rawtypes")
 public abstract class AbstractStorageTest {
     private static Item getItem() {
-        return mock(Item.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        return new Item();
     }
 
     protected abstract Storage getStorage();
@@ -54,7 +54,7 @@ public abstract class AbstractStorageTest {
 
         storage.create(item);
 
-        assertSame(item, storage.get(item.getId()).orElseThrow());
+        assertEquals(item, storage.get(item.getId()).orElseThrow());
     }
 
     @Test

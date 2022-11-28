@@ -58,12 +58,12 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     }
 
     @Override
-    protected RowMapper<User> getRowMapper() {
+    public RowMapper<User> getRowMapper() {
         return UserDbStorage::mapRow;
     }
 
     @Override
-    protected Map<String, Object> itemToMap(User user) {
+    public Map<String, Object> itemToMap(User user) {
         return userToMap(user);
     }
 

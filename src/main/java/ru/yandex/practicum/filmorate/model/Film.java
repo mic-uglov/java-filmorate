@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -38,6 +38,10 @@ public class Film extends Item {
 
     private Set<Genre> genres;
 
+    public Film() {
+        this.genres = new HashSet<>();
+    }
+
     @Override
     public String getItemTypeName() {
         return FILM;
@@ -48,7 +52,12 @@ public class Film extends Item {
         return name;
     }
 
-    public Film() {
-        this.genres = new HashSet<>();
+    public void setGenres(List<Genre> genres) {
+        this.genres.addAll(genres);
+    }
+
+    public List<Genre> getGenres() {
+        return genres.stream()
+                .sorted(Comparator.comparingInt(Item::getId)).collect(Collectors.toUnmodifiableList());
     }
 }

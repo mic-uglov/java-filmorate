@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilmDeserializer extends JsonDeserializer<Film> {
     private final FilmService filmService;
@@ -61,7 +61,7 @@ public class FilmDeserializer extends JsonDeserializer<Film> {
 
         JsonNode genresNode = node.get("genres");
         if (genresNode != null && genresNode.getNodeType() == JsonNodeType.ARRAY) {
-            Set<Genre> genres = new HashSet<>();
+            List<Genre> genres = new ArrayList<>();
             genresNode.elements().forEachRemaining(genreNode -> {
                 JsonNode genreIdNode = genreNode.get("id");
                 if (genreIdNode != null) {
