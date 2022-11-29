@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.validation.After;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ public class Film extends Item {
     @Positive
     private int duration;
 
+    @NotNull
     private MpaRatingItem mpa;
 
     private Set<Genre> genres;
@@ -53,6 +55,7 @@ public class Film extends Item {
     }
 
     public void setGenres(List<Genre> genres) {
+        this.genres.clear();
         this.genres.addAll(genres);
     }
 

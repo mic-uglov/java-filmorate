@@ -29,7 +29,7 @@ public class FilmController extends AbstractController<Film> {
     }
 
     @GetMapping("/popular")
-    public List<Film> getMostPopular(@RequestParam(required = false, defaultValue = "0") int count) {
+    public List<Film> getMostPopular(@RequestParam(required = false) Integer count) {
         return service.getMostPopular(count);
     }
 }

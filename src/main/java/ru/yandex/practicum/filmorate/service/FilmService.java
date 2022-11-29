@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRatingItem;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -55,8 +55,8 @@ public class FilmService extends AbstractService<Film> {
         getLogger().info("Пользователь id={} удалил лайк у фильма id={}", userId, filmId);
     }
 
-    public List<Film> getMostPopular(@PositiveOrZero int count) {
-        return storage.getMostPopular(count == 0 ? DEF_POPULAR_COUNT : count);
+    public List<Film> getMostPopular(@Positive Integer count) {
+        return storage.getMostPopular(count == null ? DEF_POPULAR_COUNT : count);
     }
 
     public Optional<MpaRatingItem> getMpa(int id) {
