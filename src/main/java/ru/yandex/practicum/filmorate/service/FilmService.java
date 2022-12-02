@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import javax.validation.constraints.Positive;
 import java.util.List;
@@ -16,12 +17,14 @@ public class FilmService extends AbstractService<Film> {
     private final static int DEF_POPULAR_COUNT = 10;
 
     private final FilmStorage storage;
+    private final LikeStorage likeStorage;
     private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage storage, UserService userService) {
+    public FilmService(FilmStorage storage, LikeStorage likeStorage, UserService userService) {
         super(storage);
         this.storage = storage;
+        this.likeStorage = likeStorage;
         this.userService = userService;
     }
 
@@ -35,7 +38,7 @@ public class FilmService extends AbstractService<Film> {
 
         check(filmId);
         userService.check(userId);
-        storage.putALike(filmId, userId);
+        likeStorage.putALike(filmId, userId);
 
         getLogger().info("Пользователь id={} добавил лайк фильму id={}", userId, filmId);
     }
@@ -45,7 +48,7 @@ public class FilmService extends AbstractService<Film> {
 
         check(filmId);
         userService.check(userId);
-        storage.removeALike(filmId, userId);
+        likeStorage.removeALike(filmId, userId);
 
         getLogger().info("Пользователь id={} удалил лайк у фильма id={}", userId, filmId);
     }

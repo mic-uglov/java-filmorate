@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -13,11 +14,13 @@ import java.util.List;
 @Slf4j
 public class UserService extends AbstractService<User> {
     private final UserStorage storage;
+    private final FriendStorage friendStorage;
 
     @Autowired
-    public UserService(UserStorage storage) {
+    public UserService(UserStorage storage, FriendStorage friendStorage) {
         super(storage);
         this.storage = storage;
+        this.friendStorage = friendStorage;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class UserService extends AbstractService<User> {
         check(id1);
         if (id1 != id2) {
             check(id2);
-            storage.addFriend(id1, id2);
+            friendStorage.addFriend(id1, id2);
 
             getLogger().info("Пользователь id={} добавил в друзья пользователя id={}", id1, id2);
         } else {
@@ -58,8 +61,7 @@ public class UserService extends AbstractService<User> {
         check(id1);
         if (id1 != id2) {
             check(id2);
-            storage.deleteFriend(id1, id2);
-            storage.deleteFriend(id2, id1);
+            friendStorage.deleteFriend(id1, id2);
 
             getLogger().info("Пользователь id={} удалил из друзей пользователя id={}", id1, id2);
         } else {

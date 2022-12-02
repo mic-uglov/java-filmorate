@@ -21,7 +21,7 @@ public class FilmDbStorageTest extends FilmStorageTest {
     @Autowired
     public FilmDbStorageTest(JdbcTemplate jdbcTemplate) {
         if (storage == null) {
-            storage = new FilmDbStorage(jdbcTemplate);
+            //storage = new FilmDbStorage(jdbcTemplate);
         }
 
         if (userStorage == null) {

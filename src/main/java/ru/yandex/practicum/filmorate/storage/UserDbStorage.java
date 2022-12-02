@@ -22,22 +22,15 @@ public class UserDbStorage implements UserStorage {
     private static final String SQL_GET = "SELECT * FROM users WHERE id = ?";
     private static final String SQL_UPDATE =
             "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?";
+    private static final String SQL_GET_FRIENDS =
+            "SELECT * FROM users u JOIN friends f ON f.friend_id = u.id WHERE f.user_id = ?";
+    private static final String SQL_GET_COMMON_FRIENDS=
+            "SELECT * FROM users " +
+                    "WHERE " +
+                        "id IN (SELECT friend_id FROM friends WHERE user_id = ?) AND " +
+                        "id IN (SELECT friend_id FROM friends WHERE user_id = ?)";
     // TODO
     private static final String SQL_EXISTS = "SELECT NULL FROM users WHERE id = ?";
-
-    // TODO
-    private static final Map<String, String> sqls = Map.of(
-            "addFriend", "INSERT INTO friends SELECT ?, ? " +
-                    "WHERE NOT EXISTS (" +
-                    "SELECT NULL FROM friends WHERE user_id = ? AND friend_id = ?) AND " +
-                    "? IN (SELECT id FROM users) AND " +
-                    "? IN (SELECT id FROM users)",
-            "deleteFriend", "DELETE FROM friends WHERE user_id = ? AND friend_id = ?",
-            "getFriends", "SELECT * FROM users u JOIN friends f ON f.friend_id = u.id WHERE f.user_id = ?",
-            "getCommonFriends", "SELECT * FROM users WHERE " +
-                    "id IN (SELECT friend_id FROM friends WHERE user_id = ?) AND " +
-                    "id IN (SELECT friend_id FROM friends WHERE user_id = ?)"
-    );
 
     private static User mapRow(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
@@ -104,22 +97,12 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(int userId, int friendId) {
-        jdbcTemplate.update(sqls.get("addFriend"), userId, friendId, userId, friendId, userId, friendId);
-    }
-
-    @Override
-    public void deleteFriend(int userId, int friendId) {
-        jdbcTemplate.update(sqls.get("deleteFriend"), userId, friendId);
-    }
-
-    @Override
     public List<User> getFriends(int userId) {
-        return jdbcTemplate.query(sqls.get("getFriends"), UserDbStorage::mapRow, userId);
+        return jdbcTemplate.query(SQL_GET_FRIENDS, UserDbStorage::mapRow, userId);
     }
 
     @Override
     public List<User> getCommonFriends(int id1, int id2) {
-        return jdbcTemplate.query(sqls.get("getCommonFriends"), UserDbStorage::mapRow, id1, id2);
+        return jdbcTemplate.query(SQL_GET_COMMON_FRIENDS, UserDbStorage::mapRow, id1, id2);
     }
 }

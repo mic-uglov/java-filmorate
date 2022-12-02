@@ -6,8 +6,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,8 +14,10 @@ public class FilmServiceTest extends AbstractServiceTest<Film> {
 
     @Override
     protected FilmService getService() {
+        /*
         userService = new UserService(new InMemoryUserStorage());
-        return new FilmService(new InMemoryFilmStorage(), userService);
+        return new FilmService(new InMemoryFilmStorage(), userService);*/
+        return null;
     }
 
     @Override

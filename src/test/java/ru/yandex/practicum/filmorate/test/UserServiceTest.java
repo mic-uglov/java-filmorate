@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ItemNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest extends AbstractServiceTest<User> {
     @Override
     protected UserService getService() {
-        return new UserService(new InMemoryUserStorage());
+        return null; //new UserService(new InMemoryUserStorage());
     }
 
     @Override
