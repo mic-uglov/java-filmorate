@@ -31,9 +31,10 @@ public class FilmService extends AbstractService<Film> {
     public void putALike(int filmId, int userId) {
         getLogger().info("Пользователю id={} нравится фильм id={}", userId, filmId);
 
-        check(filmId);
-        userService.check(userId);
-        likeStorage.putALike(filmId, userId);
+        if (!likeStorage.putALike(filmId, userId)) {
+            check(filmId);
+            userService.check(userId);
+        }
 
         getLogger().info("Пользователь id={} добавил лайк фильму id={}", userId, filmId);
     }
@@ -41,9 +42,10 @@ public class FilmService extends AbstractService<Film> {
     public void removeALike(int filmId, int userId) {
         getLogger().info("Пользователю id={} не нравится фильм id={}", userId, filmId);
 
-        check(filmId);
-        userService.check(userId);
-        likeStorage.removeALike(filmId, userId);
+        if (!likeStorage.removeALike(filmId, userId)) {
+            check(filmId);
+            userService.check(userId);
+        }
 
         getLogger().info("Пользователь id={} удалил лайк у фильма id={}", userId, filmId);
     }

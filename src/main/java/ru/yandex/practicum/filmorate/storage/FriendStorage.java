@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 public interface FriendStorage {
-    void addFriend(int userId, int friendId);
-    void deleteFriend(int userId, int friendId);
+    boolean addFriend(int userId, int friendId);
+    boolean deleteFriend(int userId, int friendId);
 }

@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.storage.LikeStorage;
 public class LikeDbStorage implements LikeStorage {
     private static final String SQL_PUT =
             "INSERT INTO likes SELECT ?, ? " +
-                    "WHERE NOT EXISTS (" +
+                "WHERE NOT EXISTS (" +
                     "SELECT NULL FROM likes WHERE film_id = ? AND user_id = ?)";
     private static final String SQL_REMOVE = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
 
@@ -21,12 +21,16 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     @Override
-    public void putALike(int userId, int filmId) {
-        jdbcTemplate.update(SQL_PUT, userId, filmId, userId, filmId);
+    public boolean putALike(int userId, int filmId) {
+        int cnt = jdbcTemplate.update(SQL_PUT, userId, filmId, userId, filmId);
+
+        return cnt == 1;
     }
 
     @Override
-    public void removeALike(int userId, int filmId) {
-        jdbcTemplate.update(SQL_REMOVE, userId, filmId);
+    public boolean removeALike(int userId, int filmId) {
+        int cnt = jdbcTemplate.update(SQL_REMOVE, userId, filmId);
+
+        return cnt == 1;
     }
 }

@@ -26,10 +26,11 @@ public class UserService extends AbstractService<User> {
     public void becomeFriends(int id1, int id2) {
         getLogger().info("Пользователь id={} добавляет в друзья пользователя id={}", id1, id2);
 
-        check(id1);
         if (id1 != id2) {
-            check(id2);
-            friendStorage.addFriend(id1, id2);
+            if (!friendStorage.addFriend(id1, id2)) {
+                check(id1);
+                check(id2);
+            }
 
             getLogger().info("Пользователь id={} добавил в друзья пользователя id={}", id1, id2);
         } else {
@@ -40,25 +41,23 @@ public class UserService extends AbstractService<User> {
     public void stopBeingFriends(int id1, int id2) {
         getLogger().info("Пользователь id={} удаляет из друзей пользователя id={}", id1, id2);
 
-        check(id1);
         if (id1 != id2) {
-            check(id2);
-            friendStorage.deleteFriend(id1, id2);
-
-            getLogger().info("Пользователь id={} удалил из друзей пользователя id={}", id1, id2);
+            if (friendStorage.deleteFriend(id1, id2)) {
+                getLogger().info("Пользователь id={} удалил из друзей пользователя id={}", id1, id2);
+            } else {
+                check(id1);
+                check(id2);
+            }
         } else {
             getLogger().info("Пользователь id={} сам себе лучший друг", id1);
         }
     }
 
     public List<User> getCommonFriends(int id1, int id2) {
-        check(id1);
-        check(id2);
         return storage.getCommonFriends(id1, id2);
     }
 
     public List<User> getFriends(int id) {
-        check(id);
         return storage.getFriends(id);
     }
 

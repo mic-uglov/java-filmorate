@@ -30,7 +30,8 @@ public class FilmDbStorage implements FilmStorage {
                     "f.*, " +
                     "LISTAGG(fg.genre_id, ',') WITHIN GROUP (ORDER BY fg.genre_id) genres " +
                 "FROM films f LEFT JOIN film_genre fg ON fg.film_id = f.id " +
-                "WHERE f.id = ?";
+                "WHERE f.id = ? " +
+                "GROUP BY f.id";
     private static final String SQL_UPDATE =
             "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa = ? " +
                     "WHERE id = ?";
@@ -91,14 +92,22 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void update(Film film) {
-        jdbcTemplate.update(SQL_UPDATE,
+    public boolean update(Film film) {
+        int cnt = jdbcTemplate.update(SQL_UPDATE,
                 film.getName(), film.getDescription(),
-                film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
+                film.getReleaseDate(), film.getDuration(), film.getMpa().getId(),
+                film.getId());
+
+        if (cnt == 0) {
+            return false;
+        }
+
         if (!film.getGenres().equals(getFilmGenres(film))) {
             jdbcTemplate.update(SQL_DELETE_FILM_GENRES, film.getId());
             insertFilmGenres(film);
         }
+
+        return true;
     }
 
     @Override

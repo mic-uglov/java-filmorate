@@ -35,10 +35,8 @@ public abstract class AbstractService<T extends Item> {
     public Optional<T> get(int id) {
         getLogger().info("Получение объекта id={}", id);
 
-        check(id);
-
         Optional<T> optionalItem = storage.get(id);
-        T item = optionalItem.orElseThrow();
+        T item = optionalItem.orElseThrow(() -> getNotFoundException(id));
 
         getLogger().info("Найден {} {}", item.getItemTypeName(), item.getShort());
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
@@ -64,9 +62,10 @@ public abstract class AbstractService<T extends Item> {
         getLogger().info("{} {} id={} - обновление", item.getItemTypeName(), item.getShort(), id);
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
 
-        check(item.getId());
         autoFill(item);
-        storage.update(item);
+        if (!storage.update(item)) {
+            throw getNotFoundException(id);
+        }
 
         getLogger().info("{} {} id={} успешно обновлен", item.getItemTypeName(), item.getShort(), id);
 
@@ -75,8 +74,7 @@ public abstract class AbstractService<T extends Item> {
 
     protected void check(int id) {
         if (!storage.exists(id)) {
-            getLogger().error("Не найден объект id={}", id);
-            throw new ItemNotFoundException("Не найден объект id=" + id);
+            throw getNotFoundException(id);
         }
     }
 
@@ -85,6 +83,12 @@ public abstract class AbstractService<T extends Item> {
     }
 
     protected void autoFill(T item) {
+    }
+
+    private ItemNotFoundException getNotFoundException(int id) {
+        getLogger().error("Не найден объект id={}", id);
+
+        return new ItemNotFoundException("Не найден объект id=" + id);
     }
 
     private String getJsonForTrace(T item) {

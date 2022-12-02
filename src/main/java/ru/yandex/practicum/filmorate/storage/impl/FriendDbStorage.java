@@ -10,9 +10,10 @@ public class FriendDbStorage implements FriendStorage {
     private static final String SQL_ADD =
             "INSERT INTO friends SELECT ?, ? " +
                 "WHERE NOT EXISTS (" +
-                "SELECT NULL FROM friends WHERE user_id = ? AND friend_id = ?) AND " +
-                "? IN (SELECT id FROM users) AND " +
-                "? IN (SELECT id FROM users)";
+                "SELECT NULL FROM friends " +
+                    "WHERE user_id = ? AND friend_id = ?) AND " +
+                        "? IN (SELECT id FROM users) AND " +
+                        "? IN (SELECT id FROM users)";
     private static final String SQL_DEL = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
 
     private final JdbcTemplate jdbcTemplate;
@@ -23,12 +24,16 @@ public class FriendDbStorage implements FriendStorage {
     }
 
     @Override
-    public void addFriend(int userId, int friendId) {
-        jdbcTemplate.update(SQL_ADD, userId, friendId, userId, friendId, userId, friendId);
+    public boolean addFriend(int userId, int friendId) {
+        int cnt = jdbcTemplate.update(SQL_ADD, userId, friendId, userId, friendId, userId, friendId);
+
+        return cnt == 1;
     }
 
     @Override
-    public void deleteFriend(int userId, int friendId) {
-        jdbcTemplate.update(SQL_DEL, userId, friendId);
+    public boolean deleteFriend(int userId, int friendId) {
+        int cnt = jdbcTemplate.update(SQL_DEL, userId, friendId);
+
+        return cnt == 1;
     }
 }
