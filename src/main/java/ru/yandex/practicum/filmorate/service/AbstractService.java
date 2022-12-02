@@ -28,10 +28,6 @@ public abstract class AbstractService<T extends Item> {
         this.objectMapper = objectMapper;
     }
 
-    protected Logger getLogger() {
-        return NOPLogger.NOP_LOGGER;
-    }
-
     public List<T> getAll() {
         return storage.getAll();
     }
@@ -48,13 +44,6 @@ public abstract class AbstractService<T extends Item> {
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
 
         return optionalItem;
-    }
-
-    protected void check(int id) {
-        if (!storage.exists(id)) {
-            getLogger().error("Не найден объект id={}", id);
-            throw new ItemNotFoundException("Не найден объект id=" + id);
-        }
     }
 
     public T create(@Valid T item) {
@@ -84,6 +73,20 @@ public abstract class AbstractService<T extends Item> {
         return item;
     }
 
+    protected void check(int id) {
+        if (!storage.exists(id)) {
+            getLogger().error("Не найден объект id={}", id);
+            throw new ItemNotFoundException("Не найден объект id=" + id);
+        }
+    }
+
+    protected Logger getLogger() {
+        return NOPLogger.NOP_LOGGER;
+    }
+
+    protected void autoFill(T item) {
+    }
+
     private String getJsonForTrace(T item) {
         if (objectMapper == null || !getLogger().isTraceEnabled()) {
             return null;
@@ -94,8 +97,5 @@ public abstract class AbstractService<T extends Item> {
         } catch (JsonProcessingException e) {
             return null;
         }
-    }
-
-    protected void autoFill(T item) {
     }
 }

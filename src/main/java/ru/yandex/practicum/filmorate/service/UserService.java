@@ -23,24 +23,6 @@ public class UserService extends AbstractService<User> {
         this.friendStorage = friendStorage;
     }
 
-    @Override
-    protected Logger getLogger() {
-        return log;
-    }
-
-    @Override
-    protected void autoFill(User user) {
-        String name = user.getName();
-
-        if (name != null && !name.isBlank()) {
-            return;
-        }
-
-        user.setName(user.getLogin());
-
-        getLogger().info("Пользователю id={} установлено имя {}", user.getId(), user.getName());
-    }
-
     public void becomeFriends(int id1, int id2) {
         getLogger().info("Пользователь id={} добавляет в друзья пользователя id={}", id1, id2);
 
@@ -78,5 +60,23 @@ public class UserService extends AbstractService<User> {
     public List<User> getFriends(int id) {
         check(id);
         return storage.getFriends(id);
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return log;
+    }
+
+    @Override
+    protected void autoFill(User user) {
+        String name = user.getName();
+
+        if (name != null && !name.isBlank()) {
+            return;
+        }
+
+        user.setName(user.getLogin());
+
+        getLogger().info("Пользователю id={} установлено имя {}", user.getId(), user.getName());
     }
 }

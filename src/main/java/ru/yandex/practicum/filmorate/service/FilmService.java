@@ -28,11 +28,6 @@ public class FilmService extends AbstractService<Film> {
         this.userService = userService;
     }
 
-    @Override
-    protected Logger getLogger() {
-        return log;
-    }
-
     public void putALike(int filmId, int userId) {
         getLogger().info("Пользователю id={} нравится фильм id={}", userId, filmId);
 
@@ -55,5 +50,10 @@ public class FilmService extends AbstractService<Film> {
 
     public List<Film> getMostPopular(@Positive Integer count) {
         return storage.getMostPopular(count == null ? DEF_POPULAR_COUNT : count);
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return log;
     }
 }

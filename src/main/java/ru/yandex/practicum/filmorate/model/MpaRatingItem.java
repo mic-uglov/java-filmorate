@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties({"itemTypeName", "short", "description"})
 public class MpaRatingItem extends Item {
+    private static final String MPA = "MPA";
+
     private final String name;
     private final String description;
 
@@ -15,5 +17,15 @@ public class MpaRatingItem extends Item {
         this.name = name;
         this.description = description;
         this.setId(id);
+    }
+
+    @Override
+    public String getItemTypeName() {
+        return MPA;
+    }
+
+    @Override
+    public String getShort() {
+        return name;
     }
 }

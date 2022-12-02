@@ -7,16 +7,12 @@ import java.util.Objects;
 
 @Data
 @JsonIgnoreProperties({"itemTypeName", "short"})
-public class Item {
+public abstract class Item {
     private Integer id;
 
-    public String getItemTypeName() {
-        return null;
-    }
+    public abstract String getItemTypeName();
 
-    public String getShort() {
-        return null;
-    }
+    public abstract String getShort();
 
     @Override
     public boolean equals(Object o) {
