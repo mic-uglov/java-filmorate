@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -15,14 +15,27 @@ import java.util.*;
 
 @Repository
 @Primary
-public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorage {
+public class FilmDbStorage implements FilmStorage {
     private static final String TABLE_NAME = "films";
+
+    private static final String SQL_GET_ALL = "SELECT * FROM films";
+    private static final String SQL_GET = "SELECT * FROM films WHERE id = ?";
+    private static final String SQL_UPDATE =
+            "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa = ? " +
+                    "WHERE id = ?";
+    // TODO
+    private static final String SQL_EXISTS = "SELECT NULL FROM films WHERE id = ?";
+
+    private final JdbcTemplate jdbcTemplate;
+
+    private final Map<Integer, MpaRatingItem> mpas;
+    private final Map<Integer, Genre> genres;
+
+    // TODO
     private static final Map<String, String> sqls = Map.of(
             "getMpas", "SELECT * FROM mpa_rating ORDER BY id",
             "getGenres", "SELECT * FROM genres ORDER BY id",
             "getFilmGenres", "SELECT genre_id FROM film_genre WHERE film_id = ? ORDER BY genre_id",
-            "update", "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa = ? " +
-                    "WHERE id = ?",
             "deleteFilmGenres", "DELETE FROM film_genre WHERE film_id = ?",
             "insertFilmGenre", "INSERT INTO film_genre VALUES (?, ?)",
             "putALike",
@@ -42,24 +55,13 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
         filmMap.put("description", film.getDescription());
         filmMap.put("release_date", film.getReleaseDate());
         filmMap.put("duration", film.getDuration());
-        MpaRatingItem mpa = film.getMpa();
-        if (mpa == null) {
-            filmMap.put("mpa", null);
-        } else {
-            filmMap.put("mpa", mpa.getId());
-        }
+        filmMap.put("mpa", film.getMpa().getId());
 
         return filmMap;
     }
 
-    private final JdbcTemplate jdbcTemplate;
-
-    private final Map<Integer, MpaRatingItem> mpas;
-    private final Map<Integer, Genre> genres;
-
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate, TABLE_NAME);
         this.jdbcTemplate = jdbcTemplate;
 
         mpas = new TreeMap<>();
@@ -67,6 +69,26 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
 
         genres = new TreeMap<>();
         cacheGenres();
+    }
+
+    @Override
+    public List<Film> getAll() {
+        return jdbcTemplate.query(SQL_GET_ALL, this::mapRow);
+    }
+
+    @Override
+    public Optional<Film> get(int id) {
+        List<Film> films = jdbcTemplate.query(SQL_GET, this::mapRow, id);
+        if (films.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(films.get(0));
+        }
+    }
+
+    @Override
+    public boolean exists(int id) {
+        return jdbcTemplate.queryForRowSet(SQL_EXISTS, id).next();
     }
 
     private void cacheMpas() {
@@ -86,11 +108,6 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
                         rs.getInt("id"),
                         rs.getString("name")));
         genresList.forEach(genre -> genres.put(genre.getId(), genre));
-    }
-
-    @Override
-    public RowMapper<Film> getRowMapper() {
-        return this::mapRow;
     }
 
     private Film mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -115,23 +132,24 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     }
 
     @Override
-    public Map<String, Object> itemToMap(Film film) {
-        return filmToMap(film);
-    }
-
-    @Override
     public void create(Film film) {
-        super.create(film);
-        insertFilmGenres(film);
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName(TABLE_NAME)
+                .usingGeneratedKeyColumns("id");
+        film.setId(jdbcInsert.executeAndReturnKey(filmToMap(film)).intValue());
+        // TODO
+        // жанры надо добавить batchUpdate
+        // причем, видимо, через службу?
     }
 
     @Override
     public void update(Film film) {
-        jdbcTemplate.update(sqls.get("update"),
-                film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
-                film.getMpa() == null ? null : film.getMpa().getId(), film.getId());
+        jdbcTemplate.update(SQL_UPDATE,
+                film.getName(), film.getDescription(),
+                film.getReleaseDate(), film.getDuration(), film.getMpa());
         if (!film.getGenres().equals(getFilmGenres(film))) {
             jdbcTemplate.update(sqls.get("deleteFilmGenres"), film.getId());
+            // TODO с жанрами будет работать по-другому
             insertFilmGenres(film);
         }
     }
@@ -156,7 +174,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
 
     @Override
     public List<Film> getMostPopular(int count) {
-        return jdbcTemplate.query(sqls.get("getMostPopular"), getRowMapper(), count);
+        return jdbcTemplate.query(sqls.get("getMostPopular"), this::mapRow, count);
     }
 
     @Override
