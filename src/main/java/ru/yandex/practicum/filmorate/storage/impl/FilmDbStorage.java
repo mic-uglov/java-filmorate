@@ -23,13 +23,13 @@ public class FilmDbStorage implements FilmStorage {
             "SELECT " +
                     "f.*, " +
                     "LISTAGG(fg.genre_id, ',') WITHIN GROUP (ORDER BY fg.genre_id) genres " +
-                "FROM films f JOIN film_genre fg ON fg.film_id = f.id " +
+                "FROM films f LEFT JOIN film_genre fg ON fg.film_id = f.id " +
                 "GROUP BY f.id";
     private static final String SQL_GET =
             "SELECT " +
                     "f.*, " +
                     "LISTAGG(fg.genre_id, ',') WITHIN GROUP (ORDER BY fg.genre_id) genres " +
-                "FROM films f JOIN film_genre fg ON fg.film_id = f.id " +
+                "FROM films f LEFT JOIN film_genre fg ON fg.film_id = f.id " +
                 "WHERE f.id = ?";
     private static final String SQL_UPDATE =
             "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa = ? " +
@@ -42,7 +42,7 @@ public class FilmDbStorage implements FilmStorage {
             "SELECT f.*, " +
                     "LISTAGG(fg.genre_id, ',') WITHIN GROUP (ORDER BY fg.genre_id) genres " +
                 "FROM films f " +
-                    "JOIN film_genre fg ON fg.film_id = f.id " +
+                    "LEFT JOIN film_genre fg ON fg.film_id = f.id " +
                     "LEFT JOIN likes l ON l.film_id = f.id " +
                 "GROUP BY f.id " +
                 "ORDER BY COUNT(l.user_id) DESC " +
@@ -94,7 +94,7 @@ public class FilmDbStorage implements FilmStorage {
     public void update(Film film) {
         jdbcTemplate.update(SQL_UPDATE,
                 film.getName(), film.getDescription(),
-                film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
+                film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
         if (!film.getGenres().equals(getFilmGenres(film))) {
             jdbcTemplate.update(SQL_DELETE_FILM_GENRES, film.getId());
             insertFilmGenres(film);
@@ -133,6 +133,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private List<Genre> getFilmGenresByIds(String ids) {
+        if (ids == null || ids.isBlank()) {
+            return Collections.emptyList();
+        }
+
         return Arrays.stream(ids.split(","))
                 .map(id -> genreStorage.get(Integer.parseInt(id)).orElseThrow())
                 .collect(Collectors.toUnmodifiableList());

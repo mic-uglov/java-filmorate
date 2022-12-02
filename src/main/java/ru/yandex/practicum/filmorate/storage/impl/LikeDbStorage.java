@@ -22,7 +22,7 @@ public class LikeDbStorage implements LikeStorage {
 
     @Override
     public void putALike(int userId, int filmId) {
-        jdbcTemplate.update(SQL_PUT, userId, filmId);
+        jdbcTemplate.update(SQL_PUT, userId, filmId, userId, filmId);
     }
 
     @Override

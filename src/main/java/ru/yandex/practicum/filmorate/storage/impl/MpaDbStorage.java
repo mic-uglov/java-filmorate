@@ -32,7 +32,7 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public Optional<MpaRatingItem> get(int id) {
-        return Optional.of(mpas.get(id));
+        return Optional.ofNullable(mpas.get(id));
     }
 
     private static MpaRatingItem mapRow(ResultSet rs, int rowNum) throws SQLException {
