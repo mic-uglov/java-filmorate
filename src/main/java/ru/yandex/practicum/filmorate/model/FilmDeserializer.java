@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.GenreService;
+import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -14,11 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FilmDeserializer extends JsonDeserializer<Film> {
-    private final FilmService filmService;
+    private final MpaService mpaService;
+    private final GenreService genreService;
 
     @Autowired
-    public FilmDeserializer(FilmService filmService) {
-        this.filmService = filmService;
+    public FilmDeserializer(MpaService mpaService, GenreService genreService) {
+        this.mpaService = mpaService;
+        this.genreService = genreService;
     }
 
     @Override
@@ -55,7 +58,7 @@ public class FilmDeserializer extends JsonDeserializer<Film> {
         if (mpaNode != null) {
             JsonNode mpaIdNode = mpaNode.get("id");
             if (mpaIdNode != null) {
-                film.setMpa(filmService.getMpa(mpaIdNode.asInt()).orElseThrow());
+                film.setMpa(mpaService.get(mpaIdNode.asInt()).orElseThrow());
             }
         }
 
@@ -65,7 +68,7 @@ public class FilmDeserializer extends JsonDeserializer<Film> {
             genresNode.elements().forEachRemaining(genreNode -> {
                 JsonNode genreIdNode = genreNode.get("id");
                 if (genreIdNode != null) {
-                    genres.add(filmService.getGenre(genreIdNode.asInt()).orElseThrow());
+                    genres.add(genreService.get(genreIdNode.asInt()).orElseThrow());
                 }
             });
             film.setGenres(genres);
