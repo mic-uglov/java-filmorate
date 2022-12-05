@@ -10,13 +10,19 @@ import lombok.EqualsAndHashCode;
 public class MpaRatingItem extends Item {
     private static final String MPA = "MPA";
 
-    private final String name;
-    private final String description;
+    private String name;
+    private String description;
+
+    public MpaRatingItem() {}
 
     public MpaRatingItem(int id, String name, String description) {
         this.name = name;
         this.description = description;
         this.setId(id);
+    }
+
+    public MpaRatingItem(int id, String name) {
+        this(id, name, null);
     }
 
     @Override

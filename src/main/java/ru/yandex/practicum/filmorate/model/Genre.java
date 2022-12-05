@@ -8,7 +8,10 @@ import lombok.EqualsAndHashCode;
 public class Genre extends Item {
     private static final String GENRE = "Жанр";
 
-    private final String name;
+    private String name;
+
+    @SuppressWarnings("unused")
+    public Genre() {}
 
     public Genre(int id, String name) {
         this.name = name;

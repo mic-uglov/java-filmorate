@@ -13,26 +13,28 @@ import java.util.*;
 @Repository
 public class MpaDbStorage implements MpaStorage {
     private static final String SQL_GET_ALL = "SELECT * FROM mpa_rating ORDER BY id";
+    private static final String SQL_GET = "SELECT * FROM mpa_rating WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
-    private final Map<Integer, MpaRatingItem> mpas;
 
     @Autowired
     public MpaDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.mpas = new TreeMap<>();
-        refresh();
     }
 
     @Override
     public Collection<MpaRatingItem> getAll() {
-        refresh();
-        return mpas.values();
+        return jdbcTemplate.query(SQL_GET_ALL, MpaDbStorage::mapRow);
     }
 
     @Override
     public Optional<MpaRatingItem> get(int id) {
-        return Optional.ofNullable(mpas.get(id));
+        List<MpaRatingItem> mpas = jdbcTemplate.query(SQL_GET, MpaDbStorage::mapRow, id);
+        if (mpas.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(mpas.get(0));
+        }
     }
 
     private static MpaRatingItem mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -40,11 +42,5 @@ public class MpaDbStorage implements MpaStorage {
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("description"));
-    }
-
-    private void refresh() {
-        mpas.clear();
-        List<MpaRatingItem> filmGenres = jdbcTemplate.query(SQL_GET_ALL, MpaDbStorage::mapRow);
-        filmGenres.forEach(g -> mpas.put(g.getId(), g));
     }
 }

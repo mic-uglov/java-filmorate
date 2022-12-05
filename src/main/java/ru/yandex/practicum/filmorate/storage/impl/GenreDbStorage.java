@@ -13,35 +13,31 @@ import java.util.*;
 @Repository
 public class GenreDbStorage implements GenreStorage {
     private static final String SQL_GET_ALL = "SELECT * FROM genres ORDER BY id";
+    private static final String SQL_GET = "SELECT * FROM genres WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
-    private final Map<Integer, Genre> genres;
 
     @Autowired
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.genres = new TreeMap<>();
-        refresh();
     }
 
     @Override
     public Collection<Genre> getAll() {
-        refresh();
-        return genres.values();
+        return jdbcTemplate.query(SQL_GET_ALL, GenreDbStorage::mapRow);
     }
 
     @Override
     public Optional<Genre> get(int id) {
-        return Optional.ofNullable(genres.get(id));
+        List<Genre> genres = jdbcTemplate.query(SQL_GET, GenreDbStorage::mapRow, id);
+        if (genres.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(genres.get(0));
+        }
     }
 
     private static Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new Genre(rs.getInt("id"), rs.getString("name"));
-    }
-
-    private void refresh() {
-        genres.clear();
-        List<Genre> filmGenres = jdbcTemplate.query(SQL_GET_ALL, GenreDbStorage::mapRow);
-        filmGenres.forEach(g -> genres.put(g.getId(), g));
     }
 }

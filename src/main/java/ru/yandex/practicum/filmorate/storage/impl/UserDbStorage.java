@@ -28,7 +28,6 @@ public class UserDbStorage implements UserStorage {
                     "WHERE " +
                         "id IN (SELECT friend_id FROM friends WHERE user_id = ?) AND " +
                         "id IN (SELECT friend_id FROM friends WHERE user_id = ?)";
-    // TODO
     private static final String SQL_EXISTS = "SELECT NULL FROM users WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
