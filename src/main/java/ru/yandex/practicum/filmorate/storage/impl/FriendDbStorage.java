@@ -9,9 +9,10 @@ import ru.yandex.practicum.filmorate.storage.FriendStorage;
 public class FriendDbStorage implements FriendStorage {
     private static final String SQL_ADD =
             "INSERT INTO friends SELECT ?, ? " +
-                "WHERE NOT EXISTS (" +
-                "SELECT NULL FROM friends " +
-                    "WHERE user_id = ? AND friend_id = ?) AND " +
+                "WHERE " +
+                    "NOT EXISTS (" +
+                        "SELECT NULL FROM friends " +
+                            "WHERE user_id = ? AND friend_id = ?) AND " +
                         "? IN (SELECT id FROM users) AND " +
                         "? IN (SELECT id FROM users)";
     private static final String SQL_DEL = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";

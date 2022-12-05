@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.test;
+package ru.yandex.practicum.filmorate.test.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

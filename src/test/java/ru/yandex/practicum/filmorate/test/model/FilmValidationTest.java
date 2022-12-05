@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorate.test;
+package ru.yandex.practicum.filmorate.test.model;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.MpaRatingItem;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -23,6 +24,7 @@ public class FilmValidationTest {
         film.setDescription("description");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(100);
+        film.setMpa(new MpaRatingItem(1, "mpa_name"));
 
         return film;
     }
