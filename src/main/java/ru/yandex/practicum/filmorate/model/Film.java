@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.validation.After;
@@ -10,12 +9,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@JsonDeserialize(using = FilmDeserializer.class)
 public class Film extends Item {
     private static final String FILM = "Фильм";
 
@@ -41,7 +42,7 @@ public class Film extends Item {
     private Set<Genre> genres;
 
     public Film() {
-        this.genres = new HashSet<>();
+        this.genres = new TreeSet<>(Comparator.comparingInt(Item::getId));
     }
 
     @Override
@@ -61,6 +62,6 @@ public class Film extends Item {
 
     public List<Genre> getGenres() {
         return genres.stream()
-                .sorted(Comparator.comparingInt(Item::getId)).collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toUnmodifiableList());
     }
 }
