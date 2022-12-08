@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS film_genre (
     PRIMARY KEY (film_id, genre_id));
 
 CREATE TABLE IF NOT EXISTS likes (
-    film_id BIGINT NOT NULL REFERENCES films (id),
     user_id BIGINT NOT NULL REFERENCES users (id),
-    PRIMARY KEY (film_id, user_id));
+    film_id BIGINT NOT NULL REFERENCES films (id),
+    PRIMARY KEY (user_id, film_id));
 
 CREATE TABLE IF NOT EXISTS friends (
     user_id BIGINT NOT NULL REFERENCES users (id),

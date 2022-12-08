@@ -57,7 +57,7 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN genres g ON g.id = fg.genre_id " +
                     "JOIN mpa_rating m ON m.id = f.mpa " +
                 "GROUP BY f.id " +
-                "ORDER BY COUNT(l.user_id) DESC " +
+                "ORDER BY COUNT(l.user_id) DESC, f.id " +
                 "LIMIT ?";
     private static final String SQL_EXISTS = "SELECT NULL FROM films WHERE id = ?";
 

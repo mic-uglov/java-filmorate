@@ -42,7 +42,7 @@ public class LikeStorageTest {
         userStorage.create(user);
         filmStorage.create(film);
 
-        assertTrue(likeStorage.putALike(user.getId(), film.getId()));
+        assertTrue(likeStorage.putALike(film.getId(), user.getId()));
     }
 
     @Test
@@ -52,9 +52,9 @@ public class LikeStorageTest {
 
         userStorage.create(user);
         filmStorage.create(film);
-        likeStorage.putALike(user.getId(), film.getId());
+        likeStorage.putALike(film.getId(), user.getId());
 
-        assertFalse(likeStorage.putALike(user.getId(), film.getId()));
+        assertFalse(likeStorage.putALike(film.getId(), user.getId()));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class LikeStorageTest {
 
         filmStorage.create(film);
 
-        assertFalse(likeStorage.putALike(100, film.getId()));
+        assertFalse(likeStorage.putALike(film.getId(), 100));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class LikeStorageTest {
 
         userStorage.create(user);
 
-        assertFalse(likeStorage.putALike(user.getId(), 100));
+        assertFalse(likeStorage.putALike(100, user.getId()));
     }
 
     @Test
@@ -82,9 +82,9 @@ public class LikeStorageTest {
 
         userStorage.create(user);
         filmStorage.create(film);
-        likeStorage.putALike(user.getId(), film.getId());
+        likeStorage.putALike(film.getId(), user.getId());
 
-        assertTrue(likeStorage.removeALike(user.getId(), film.getId()));
+        assertTrue(likeStorage.removeALike(film.getId(), user.getId()));
     }
 
     @Test

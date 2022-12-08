@@ -125,7 +125,7 @@ public class FilmStorageTest {
         filmStorage.create(film1);
         filmStorage.create(film2);
         userStorage.create(user);
-        likeStorage.putALike(user.getId(), film2.getId());
+        likeStorage.putALike(film2.getId(), user.getId());
 
         assertEquals(List.of(film2, film1), filmStorage.getMostPopular(100));
     }
@@ -139,8 +139,8 @@ public class FilmStorageTest {
         filmStorage.create(film1);
         filmStorage.create(film2);
         userStorage.create(user);
-        likeStorage.putALike(user.getId(), film2.getId());
-        likeStorage.putALike(user.getId(), film2.getId());
+        likeStorage.putALike(film1.getId(), user.getId());
+        likeStorage.putALike(film2.getId(), user.getId());
 
         assertEquals(List.of(film1, film2), filmStorage.getMostPopular(100));
     }
