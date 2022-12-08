@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -33,5 +34,10 @@ public class MpaStorageTest {
     @Test
     public void testGettingById() {
         assertEquals("PG-13", mpaStorage.get(3).orElseThrow().getName());
+    }
+
+    @Test
+    public void testGettingByWrongId() {
+        assertTrue(mpaStorage.get(999).isEmpty());
     }
 }

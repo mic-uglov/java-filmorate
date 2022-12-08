@@ -34,4 +34,9 @@ public class GenreStorageTest {
     public void testGettingById() {
         assertEquals("Мультфильм", genreStorage.get(3).orElseThrow().getName());
     }
+
+    @Test
+    public void testGettingByWrongId() {
+        assertTrue(genreStorage.get(999).isEmpty());
+    }
 }

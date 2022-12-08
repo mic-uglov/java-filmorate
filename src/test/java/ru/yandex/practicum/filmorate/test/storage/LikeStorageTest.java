@@ -7,13 +7,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.MpaRatingItem;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-
-import java.time.LocalDate;
+import ru.yandex.practicum.filmorate.test.util.TestHelper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,28 +27,6 @@ public class LikeStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private User getDummyUser(String login) {
-        User user = new User();
-
-        user.setLogin(login);
-        user.setEmail(login + "@test.tst");
-        user.setBirthday(LocalDate.now());
-
-        return user;
-    }
-
-    private Film getDummyFilm(String name) {
-        Film film = new Film();
-
-        film.setName(name);
-        film.setDescription(name);
-        film.setDuration(100);
-        film.setReleaseDate(LocalDate.now());
-        film.setMpa(new MpaRatingItem(1, "test"));
-
-        return film;
-    }
-
     @AfterEach
     public void clear() {
         jdbcTemplate.update("DELETE FROM likes");
@@ -60,8 +36,8 @@ public class LikeStorageTest {
 
     @Test
     public void testPuttingALike() {
-        User user = getDummyUser("login");
-        Film film = getDummyFilm("name");
+        User user = TestHelper.getDummyUser("login");
+        Film film = TestHelper.getDummyFilm("name");
 
         userStorage.create(user);
         filmStorage.create(film);
@@ -71,8 +47,8 @@ public class LikeStorageTest {
 
     @Test
     public void testPuttingALikeWhenAlreadyExists() {
-        User user = getDummyUser("login");
-        Film film = getDummyFilm("name");
+        User user = TestHelper.getDummyUser();
+        Film film = TestHelper.getDummyFilm();
 
         userStorage.create(user);
         filmStorage.create(film);
@@ -83,7 +59,7 @@ public class LikeStorageTest {
 
     @Test
     public void testPuttingALikeWhenUserDoesNotExist() {
-        Film film = getDummyFilm("name");
+        Film film = TestHelper.getDummyFilm();
 
         filmStorage.create(film);
 
@@ -92,7 +68,7 @@ public class LikeStorageTest {
 
     @Test
     public void testPuttingALikeWhenFilmDoesNotExist() {
-        User user = getDummyUser("login");
+        User user = TestHelper.getDummyUser();
 
         userStorage.create(user);
 
@@ -101,8 +77,8 @@ public class LikeStorageTest {
 
     @Test
     public void testRemovingALike() {
-        User user = getDummyUser("user");
-        Film film = getDummyFilm("film");
+        User user = TestHelper.getDummyUser();
+        Film film = TestHelper.getDummyFilm();
 
         userStorage.create(user);
         filmStorage.create(film);

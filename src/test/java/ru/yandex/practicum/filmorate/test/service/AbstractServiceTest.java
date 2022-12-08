@@ -22,6 +22,7 @@ public class AbstractServiceTest {
         service = mock(AbstractService.class,
                 withSettings().useConstructor(storage).defaultAnswer(CALLS_REAL_METHODS));
     }
+
     @Test
     public void testGettingAll() {
         Item item1 = mock(Item.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));

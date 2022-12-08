@@ -9,8 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-
-import java.time.LocalDate;
+import ru.yandex.practicum.filmorate.test.util.TestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,16 +24,6 @@ public class FriendStorageTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private User getDummyUser(String login) {
-        User user = new User();
-
-        user.setLogin(login);
-        user.setEmail(login + "@test.tst");
-        user.setBirthday(LocalDate.now());
-
-        return user;
-    }
-
     @AfterEach
     public void clear() {
         jdbcTemplate.update("DELETE FROM friends");
@@ -43,8 +32,8 @@ public class FriendStorageTest {
 
     @Test
     public void testAddingFriend() {
-        User user1 = getDummyUser("user1");
-        User user2 = getDummyUser("user2");
+        User user1 = TestHelper.getDummyUser("user1");
+        User user2 = TestHelper.getDummyUser("user2");
 
         userStorage.create(user1);
         userStorage.create(user2);
@@ -54,8 +43,8 @@ public class FriendStorageTest {
 
     @Test
     public void testAddingFriendWhenAlreadyExists() {
-        User user1 = getDummyUser("user1");
-        User user2 = getDummyUser("user2");
+        User user1 = TestHelper.getDummyUser("user1");
+        User user2 = TestHelper.getDummyUser("user2");
 
         userStorage.create(user1);
         userStorage.create(user2);
@@ -66,7 +55,7 @@ public class FriendStorageTest {
 
     @Test
     public void testAddingFriendWhenUserDoesNotExists() {
-        User user = getDummyUser("friend");
+        User user = TestHelper.getDummyUser();
 
         userStorage.create(user);
 
@@ -75,7 +64,7 @@ public class FriendStorageTest {
 
     @Test
     public void testAddingFriendWhenFriendDoesNotExists() {
-        User user = getDummyUser("user");
+        User user = TestHelper.getDummyUser();
 
         userStorage.create(user);
 
@@ -84,8 +73,8 @@ public class FriendStorageTest {
 
     @Test
     public void testDeletingFriend() {
-        User user1 = getDummyUser("user1");
-        User user2 = getDummyUser("user2");
+        User user1 = TestHelper.getDummyUser("user1");
+        User user2 = TestHelper.getDummyUser("user2");
 
         userStorage.create(user1);
         userStorage.create(user2);

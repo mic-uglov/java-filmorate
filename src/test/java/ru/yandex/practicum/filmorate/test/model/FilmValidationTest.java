@@ -4,7 +4,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.MpaRatingItem;
+import ru.yandex.practicum.filmorate.test.util.TestHelper;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -17,18 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FilmValidationTest {
     private static Validator validator;
 
-    private static Film getDummyFilm() {
-        Film film = new Film();
-
-        film.setName("name");
-        film.setDescription("description");
-        film.setReleaseDate(LocalDate.now());
-        film.setDuration(100);
-        film.setMpa(new MpaRatingItem(1, "mpa_name"));
-
-        return film;
-    }
-
     @BeforeAll
     public static void setUp() {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
@@ -38,14 +26,14 @@ public class FilmValidationTest {
 
     @Test
     public void testValidFilm() {
-        Film film = getDummyFilm();
+        Film film = TestHelper.getDummyFilm();
 
         assertTrue(validator.validate(film).isEmpty());
     }
 
     @Test
     public void testValidationWhenNameBlank() {
-        Film film = getDummyFilm();
+        Film film = TestHelper.getDummyFilm();
 
         film.setName(null);
         assertEquals(1, validator.validate(film).size());
@@ -56,7 +44,7 @@ public class FilmValidationTest {
 
     @Test
     public void testValidationWhenDurationNotPositive() {
-        Film film = getDummyFilm();
+        Film film = TestHelper.getDummyFilm();
 
         film.setDuration(0);
         assertEquals(1, validator.validate(film).size());
@@ -67,7 +55,7 @@ public class FilmValidationTest {
 
     @Test
     public void testValidationWhenDescriptionIsTooLong() {
-        Film film = getDummyFilm();
+        Film film = TestHelper.getDummyFilm();
 
         film.setDescription(Strings.repeat("*", 300));
         assertEquals(1, validator.validate(film).size());
@@ -75,7 +63,7 @@ public class FilmValidationTest {
 
     @Test
     public void testValidationWhenReleaseDateTooOld() {
-        Film film = getDummyFilm();
+        Film film = TestHelper.getDummyFilm();
 
         film.setReleaseDate(LocalDate.EPOCH.minusYears(300));
         assertEquals(1, validator.validate(film).size());
