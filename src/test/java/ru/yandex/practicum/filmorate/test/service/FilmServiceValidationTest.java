@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.test;
+package ru.yandex.practicum.filmorate.test.service;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,22 +30,24 @@ public class FilmServiceValidationTest {
     @Test
     public void testGettingMostPopularWithValidCount() throws NoSuchMethodException {
         FilmService service = getService();
-        Method getMostPopularMethod = service.getClass().getMethod("getMostPopular", int.class);
+        Method getMostPopularMethod = service.getClass().getMethod("getMostPopular", Integer.class);
 
         assertTrue(executableValidator.validateParameters(
                 service, getMostPopularMethod, new Object[]{100}).isEmpty());
-
         assertTrue(executableValidator.validateParameters(
-                service, getMostPopularMethod, new Object[]{0}).isEmpty());
+                service, getMostPopularMethod, new Object[]{null}).isEmpty());
     }
 
     @Test
-    public void testGettingMostPopularWithNegativeCount() throws NoSuchMethodException {
+    public void testGettingMostPopularWithWrongCount() throws NoSuchMethodException {
         FilmService service = getService();
-        Method getMostPopularMethod = service.getClass().getMethod("getMostPopular", int.class);
+        Method getMostPopularMethod = service.getClass().getMethod("getMostPopular", Integer.class);
 
         assertEquals(1,
                 executableValidator
                         .validateParameters(service, getMostPopularMethod, new Object[]{-1}).size());
+        assertEquals(1,
+                executableValidator
+                        .validateParameters(service, getMostPopularMethod, new Object[]{0}).size());
     }
 }

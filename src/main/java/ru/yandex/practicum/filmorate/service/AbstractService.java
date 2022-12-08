@@ -28,24 +28,20 @@ public abstract class AbstractService<T extends Item> {
         this.objectMapper = objectMapper;
     }
 
-    protected Logger getLogger() {
-        return NOPLogger.NOP_LOGGER;
-    }
-
     public List<T> getAll() {
         return storage.getAll();
     }
 
     public Optional<T> get(int id) {
-        check(id);
-        return storage.get(id);
-    }
+        getLogger().info("Получение объекта id={}", id);
 
-    protected void check(int id) {
-        if (!storage.exists(id)) {
-            getLogger().error("Не найден объект id={}", id);
-            throw new ItemNotFoundException("Не найден объект id=" + id);
-        }
+        Optional<T> optionalItem = storage.get(id);
+        T item = optionalItem.orElseThrow(() -> getNotFoundException(id));
+
+        getLogger().info("Найден {} {}", item.getItemTypeName(), item.getShort());
+        getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
+
+        return optionalItem;
     }
 
     public T create(@Valid T item) {
@@ -66,13 +62,33 @@ public abstract class AbstractService<T extends Item> {
         getLogger().info("{} {} id={} - обновление", item.getItemTypeName(), item.getShort(), id);
         getLogger().trace("{}: {}", item.getClass(), getJsonForTrace(item));
 
-        check(item.getId());
         autoFill(item);
-        storage.update(item);
+        if (!storage.update(item)) {
+            throw getNotFoundException(id);
+        }
 
         getLogger().info("{} {} id={} успешно обновлен", item.getItemTypeName(), item.getShort(), id);
 
         return item;
+    }
+
+    protected void check(int id) {
+        if (!storage.exists(id)) {
+            throw getNotFoundException(id);
+        }
+    }
+
+    protected Logger getLogger() {
+        return NOPLogger.NOP_LOGGER;
+    }
+
+    protected void autoFill(T item) {
+    }
+
+    private ItemNotFoundException getNotFoundException(int id) {
+        getLogger().error("Не найден объект id={}", id);
+
+        return new ItemNotFoundException("Не найден объект id=" + id);
     }
 
     private String getJsonForTrace(T item) {
@@ -85,8 +101,5 @@ public abstract class AbstractService<T extends Item> {
         } catch (JsonProcessingException e) {
             return null;
         }
-    }
-
-    protected void autoFill(T item) {
     }
 }

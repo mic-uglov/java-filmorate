@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleOthers(Throwable e) {
         log.error("Непредвиденная ошибка", e);
         return new ResponseEntity<>(
-                new ErrorResponse("Непредвиденная ошибка:" + e.getMessage(),
+                new ErrorResponse("Непредвиденная ошибка: " + e.getMessage(),
                         HttpStatus.INTERNAL_SERVER_ERROR.value()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }

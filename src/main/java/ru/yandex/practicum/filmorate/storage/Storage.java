@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface Storage<T extends Item> {
     List<T> getAll();
     void create(T item);
-    void update(T item);
+    boolean update(T item);
     Optional<T> get(int id);
     boolean exists(int id);
 }

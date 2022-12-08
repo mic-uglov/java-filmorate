@@ -1,8 +1,9 @@
-package ru.yandex.practicum.filmorate.test;
+package ru.yandex.practicum.filmorate.test.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.test.util.TestHelper;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -15,16 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserValidationTest {
     private static Validator validator;
 
-    private static User getDummyUser() {
-        User user = new User();
-
-        user.setLogin("login");
-        user.setEmail("email@ya.ru");
-        user.setBirthday(LocalDate.now().minusYears(20));
-
-        return user;
-    }
-
     @BeforeAll
     public static void setUp() {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
@@ -34,14 +25,14 @@ public class UserValidationTest {
 
     @Test
     public void testValidUser() {
-        User user = getDummyUser();
+        User user = TestHelper.getDummyUser();
 
         assertTrue(validator.validate(user).isEmpty());
     }
 
     @Test
     public void testValidationWhenEmailIsInvalid() {
-        User user = getDummyUser();
+        User user = TestHelper.getDummyUser();
 
         user.setEmail(null);
         assertEquals(1, validator.validate(user).size());
@@ -55,7 +46,7 @@ public class UserValidationTest {
 
     @Test
     public void testValidationWhenLoginIsInvalid() {
-        User user = getDummyUser();
+        User user = TestHelper.getDummyUser();
 
         user.setLogin(null);
         assertEquals(1, validator.validate(user).size());
@@ -69,7 +60,7 @@ public class UserValidationTest {
 
     @Test
     public void testValidationWhenBirthdayIsNull() {
-        User user = getDummyUser();
+        User user = TestHelper.getDummyUser();
 
         user.setBirthday(null);
         assertEquals(1, validator.validate(user).size());
@@ -77,7 +68,7 @@ public class UserValidationTest {
 
     @Test
     public void testValidationWhenBirthdayInvalid() {
-        User user = getDummyUser();
+        User user = TestHelper.getDummyUser();
 
         user.setBirthday(LocalDate.now().plusYears(1));
         assertEquals(1, validator.validate(user).size());
